@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle, ArrowRight, Code, Terminal, Database, Cloud } from 'lucide-react';
 import WorkshopCard from './WorkshopCard';
 
-const Workshops = () => {
+const Workshops = ({ sectionRef, highlight }) => {
   const workshopData = [
     {
       id: 1,
@@ -35,15 +35,15 @@ const Workshops = () => {
       originalPrice: "2499"
     },
     {
-        id: 4,
-        title: "Cloud Foundations Workshop",
-        description: "Introduction to AWS and cloud computing fundamentals.",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        duration: "1 Day",
-        mode: "Live Online",
-        price: "299",
-        originalPrice: "999"
-      },
+      id: 4,
+      title: "Cloud Foundations Workshop",
+      description: "Introduction to AWS and cloud computing fundamentals.",
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      duration: "1 Day",
+      mode: "Live Online",
+      price: "299",
+      originalPrice: "999"
+    },
       {
         id: 5,
         title: "Digital Marketing Essentials",
@@ -66,8 +66,17 @@ const Workshops = () => {
       }
   ];
 
+  // Conditional Classes based on highlight prop
+  const applyBtnClass = highlight 
+      ? "px-8 py-4 bg-gradient-to-r from-[#16A34A] to-[#22C55E] text-white rounded-xl font-bold shadow-[0_0_30px_rgba(34,197,94,0.6)] scale-110 ring-4 ring-green-300 transition-all duration-500 ease-in-out text-lg animate-pulse"
+      : "px-8 py-4 bg-gradient-to-r from-[#16A34A] to-[#22C55E] text-white rounded-xl font-bold shadow-lg hover:shadow-green-500/30 hover:scale-[1.03] transition-all duration-300 text-lg";
+
+  const heroImageContainerClass = highlight
+      ? "relative w-full h-full rounded-full border-[8px] border-indigo-200 shadow-[0_0_60px_rgba(99,102,241,0.6)] overflow-hidden z-10 scale-105 transition-all duration-700 ease-in-out"
+      : "relative w-full h-full rounded-full border-[8px] border-white shadow-2xl overflow-hidden z-10 animate-float-slow transition-all duration-1000";
+
   return (
-    <section className="py-20 bg-transparent relative" id="workshops">
+    <section className="py-20 bg-transparent relative" id="workshops" ref={sectionRef}>
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* SECTION 1: HERO - Split Layout with Circular Frame */}
@@ -86,10 +95,9 @@ const Workshops = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-6 mb-10">
-                   <button className="px-8 py-4 bg-gradient-to-r from-[#16A34A] to-[#22C55E] text-white rounded-xl font-bold shadow-lg hover:shadow-green-500/30 hover:scale-[1.03] transition-all duration-300 text-lg">
-    Apply Now
-</button>
-
+                   <button className={applyBtnClass}>
+                       Apply Now
+                   </button>
                     
                     {/* Schedule Button Container with Hover Card */}
                     <div className="relative group">
@@ -173,7 +181,7 @@ const Workshops = () => {
             </div>
 
             {/* Right Column: Circular Hero Visual */}
-            <div className="relative flex justify-center lg:justify-end animate-fade-in-up delay-200">
+            <div className={`relative flex justify-center lg:justify-end animate-fade-in-up delay-200 ${highlight ? 'z-50' : ''}`}>
                 
                 {/* Main Circular Image Frame */}
                 <div className="relative w-[400px] h-[400px] md:w-[500px] md:h-[500px]">
@@ -183,7 +191,7 @@ const Workshops = () => {
                     <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
                     {/* The Image */}
-                    <div className="relative w-full h-full rounded-full border-[8px] border-white shadow-2xl overflow-hidden z-10 animate-float-slow">
+                    <div className={heroImageContainerClass}>
                         <img 
                             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                             alt="Team Collaboration" 

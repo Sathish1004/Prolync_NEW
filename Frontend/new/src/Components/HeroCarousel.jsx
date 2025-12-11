@@ -28,7 +28,7 @@ const HeroCarousel = () => {
   ];
 
   return (
-    <div className="w-full h-[40vh] md:h-[60vh]">
+    <div className="w-full h-[50vh] md:h-[90vh]">
       <Swiper
         spaceBetween={0}
         centeredSlides={true}

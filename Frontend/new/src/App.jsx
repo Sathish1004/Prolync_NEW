@@ -1,21 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import TopBanner from './Components/TopBanner';
 import Header from './Components/Header';
 import HeroCarousel from './Components/HeroCarousel';
 import Chatbot from './Components/Chatbot';
 import AuthModal from './Components/AuthModal';
-import CourseCatalog from './Components/CourseCatalog';
 import TrendingCourses from './Components/TrendingCourses';
 import Workshops from './Components/Workshops';
 import ScrollBackground from './Components/ScrollBackground';
+import VerifyEmail from './Components/VerifyEmail';
+import CourseCatalog from './Components/CourseCatalog';
+import CommunityEcosystem from './Components/CommunityEcosystem';
+import CommunityFeatures from './Components/CommunityFeatures';
+import CertificationSection from './Components/CertificationSection';
+import BlogPage from './Components/BlogPage';
 
 function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentView, setCurrentView] = useState('home');
+  
+  // Ref and State for Workshops Scroll & Highlight
+  const workshopsRef = useRef(null);
+  const [highlightWorkshops, setHighlightWorkshops] = useState(false);
 
   const handleNavigate = (view) => {
     setCurrentView(view);
     window.scrollTo(0, 0);
+  };
+
+  const scrollToWorkshops = () => {
+    if (currentView !== 'home') {
+        setCurrentView('home');
+        // Allow time for render if switching views
+        setTimeout(() => {
+            if(workshopsRef.current) {
+                workshopsRef.current.scrollIntoView({ behavior: 'smooth' });
+                triggerHighlight();
+            }
+        }, 100);
+    } else {
+        if(workshopsRef.current) {
+            workshopsRef.current.scrollIntoView({ behavior: 'smooth' });
+            triggerHighlight();
+        }
+    }
+  };
+
+  const triggerHighlight = () => {
+      // Small delay to allow scroll to start/finish
+      setTimeout(() => {
+          setHighlightWorkshops(true);
+          // Remove highlight after 2 seconds
+          setTimeout(() => setHighlightWorkshops(false), 2000);
+      }, 500);
   };
 
   return (
@@ -26,17 +62,34 @@ function App() {
       <div className="relative z-10 flex flex-col min-h-screen">
           <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
           
+          {window.location.pathname === '/verify-email' ? (
+              <VerifyEmail />
+          ) : (
+          <>
           <TopBanner />
-          <Header onOpenAuth={() => setIsAuthOpen(true)} onNavigate={handleNavigate} currentView={currentView} />
+          <Header 
+            onOpenAuth={() => setIsAuthOpen(true)} 
+            onNavigate={handleNavigate} 
+            currentView={currentView} 
+            onScrollToWorkshops={scrollToWorkshops}
+          />
           
           <main className="flex-grow">
-        {currentView === 'home' ? (
+        {currentView === 'blog' ? (
+          <BlogPage onNavigate={handleNavigate} />
+        ) : currentView === 'browse_courses' ? (
+          <CourseCatalog />
+        ) : (
           <>
             <HeroCarousel />
             <TrendingCourses onNavigate={handleNavigate} />
-            <Workshops />
+            <Workshops sectionRef={workshopsRef} highlight={highlightWorkshops} />
+            <CommunityEcosystem />
+            <CommunityFeatures />
+            {/* Certification Section */}
+            <CertificationSection />
           </>
-        ) : (
+        )} : (
           <CourseCatalog />
         )}
       </main>
@@ -49,6 +102,8 @@ function App() {
               {/* <p>&copy; 2024 Prolync. All rights reserved.</p> */}
           </div>
       </footer>
+      </>
+      )}
       </div>
     </div>
   );

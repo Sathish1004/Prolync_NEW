@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CatalogCard from './CatalogCard';
+import CourseCard from './CourseCard';
 import { courses } from '../data/courses';
 
 const CourseCatalog = () => {
@@ -79,7 +79,7 @@ const CourseCatalog = () => {
         {/* Course Grid - 4 Column */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
            {filteredCourses.map(course => (
-              <CatalogCard key={course.id} course={course} />
+              <CourseCard key={course.id} course={course} />
            ))}
         </div>
 
