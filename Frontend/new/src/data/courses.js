@@ -8,9 +8,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop",
         duration: "40 Hrs",
         language: "English",
-        price: 3499,
-        originalPrice: 6999,
+        newPrice: 3499,
+        oldPrice: 6999,
         discount: "50% Off",
+        badge: "PAID",
         rating: 4.8
     },
     {
@@ -21,9 +22,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=2070&auto=format&fit=crop",
         duration: "25 Hrs",
         language: "English",
-        price: 1999,
-        originalPrice: 3999,
+        newPrice: 1999,
+        oldPrice: 3999,
         discount: "50% Off",
+        badge: "PAID",
         rating: 4.7
     },
     {
@@ -34,27 +36,12 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2070&auto=format&fit=crop",
         duration: "30 Hrs",
         language: "Hinglish",
-        price: 2499,
-        originalPrice: 4999,
+        newPrice: 2499,
+        oldPrice: 4999,
         discount: "50% Off",
+        badge: "PAID",
         rating: 4.9
     },
-        {
-        id: 2,
-        category: "Paid",
-        domain: "Web Development",
-        title: "HTML, CSS, JavaScript Complete Bootcamp",
-        image: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=2070&auto=format&fit=crop",
-        duration: "25 Hrs",
-        language: "English",
-        price: 1999,
-        originalPrice: 3999,
-        discount: "50% Off",
-        rating: 4.7
-    },
-    
-
-    // --- PROGRAMMING & DATA ---
     {
         id: 4,
         category: "Paid",
@@ -63,9 +50,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?q=80&w=2074&auto=format&fit=crop",
         duration: "15 Hrs",
         language: "English",
-        price: 999,
-        originalPrice: 1999,
+        newPrice: 999,
+        oldPrice: 1999,
         discount: "50% Off",
+        badge: "PAID",
         rating: 4.6
     },
     {
@@ -76,13 +64,12 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
         duration: "35 Hrs",
         language: "English",
-        price: 2999,
-        originalPrice: 5999,
+        newPrice: 2999,
+        oldPrice: 5999,
         discount: "50% Off",
+        badge: "PAID",
         rating: 4.8
     },
-
-    // --- AI & TECH ---
     {
         id: 6,
         category: "Paid",
@@ -91,9 +78,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop",
         duration: "20 Hrs",
         language: "English",
-        price: 4999,
-        originalPrice: 9999,
+        newPrice: 4999,
+        oldPrice: 9999,
         discount: "50% Off",
+        badge: "PAID",
         rating: 4.9
     },
     {
@@ -104,28 +92,12 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop",
         duration: "12 Hrs",
         language: "English",
-        price: 1499,
-        originalPrice: 2999,
+        newPrice: 1499,
+        oldPrice: 2999,
         discount: "50% Off",
+        badge: "PAID",
         rating: 4.7
     },
-
-    // --- CLOUD & DEVOPS ---
-    {
-        id: 8,
-        category: "Paid",
-        domain: "Cloud & DevOps",
-        title: "AWS Solutions Architect",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-        duration: "50 Hrs",
-        language: "English",
-        price: 5999,
-        originalPrice: 11999,
-        discount: "50% Off",
-        rating: 4.8
-    },
-
-    // --- FREE COURSES ---
     {
         id: 101,
         category: "Free",
@@ -134,9 +106,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2070&auto=format&fit=crop",
         duration: "4 Hrs",
         language: "English",
-        price: 0,
-        originalPrice: 0,
+        newPrice: 0,
+        oldPrice: 0,
         discount: null,
+        badge: "FREE",
         rating: 4.5
     },
     {
@@ -147,9 +120,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=2069&auto=format&fit=crop",
         duration: "4 Hrs",
         language: "English",
-        price: 0,
-        originalPrice: 0,
+        newPrice: 0,
+        oldPrice: 0,
         discount: null,
+        badge: "FREE",
         rating: 4.6
     },
     {
@@ -160,9 +134,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1692606526155-2200427bc521?q=80&w=2070&auto=format&fit=crop",
         duration: "2 Hrs",
         language: "English",
-        price: 0,
-        originalPrice: 0,
+        newPrice: 0,
+        oldPrice: 0,
         discount: null,
+        badge: "FREE",
         rating: 4.7
     },
     {
@@ -173,9 +148,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2071&auto=format&fit=crop",
         duration: "13 Hrs",
         language: "English",
-        price: 0,
-        originalPrice: 0,
+        newPrice: 0,
+        oldPrice: 0,
         discount: null,
+        badge: "FREE",
         rating: 4.4
     },
     {
@@ -186,51 +162,10 @@ export const courses = [
         image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
         duration: "18 Hrs",
         language: "English",
-        price: 0,
-        originalPrice: 0,
+        newPrice: 0,
+        oldPrice: 0,
         discount: null,
+        badge: "FREE",
         rating: 4.6
-    },
-    {
-        id: 106,
-        category: "Free",
-        domain: "AI",
-        title: "Deep Learning Fundamentals",
-        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop",
-        duration: "4 Hrs",
-        language: "English",
-        price: 0,
-        originalPrice: 0,
-        discount: null,
-        rating: 4.7
-    },
-
-    // --- MOBILE DEVELOPMENT ---
-    {
-        id: 9,
-        category: "Paid",
-        domain: "Mobile Development",
-        title: "Flutter App Development",
-        image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
-        duration: "45 Hrs",
-        language: "English",
-        price: 3999,
-        originalPrice: 7999,
-        discount: "50% Off",
-        rating: 4.8
-    },
-    // --- COMBO COURSES (Placeholder) ---
-    {
-        id: 201,
-        category: "Combo",
-        domain: "Web Development",
-        title: "Full Stack + DevOps Combo",
-        image: "https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=2106&auto=format&fit=crop",
-        duration: "80 Hrs",
-        language: "English",
-        price: 8999,
-        originalPrice: 17999,
-        discount: "50% Off",
-        rating: 4.9
     }
 ];

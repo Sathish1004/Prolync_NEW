@@ -1,13 +1,25 @@
-import mongoose from "mongoose";
+import mysql from "mysql2/promise";
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
 const connectDB = async () => {
     try {
-        const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URI}/prolync`);
-        console.log(`\n MongoDB connected !! DB HOST: ${connectionInstance.connection.host}`);
+        const connection = await pool.getConnection();
+        console.log(`\n MySQL Connected`);
+        connection.release();
     } catch (error) {
-        console.log("MONGODB connection error ", error);
+        console.log("MySQL connection error ", error);
         process.exit(1);
     }
 };
 
+export { pool };
 export default connectDB;

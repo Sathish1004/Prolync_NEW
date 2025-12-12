@@ -1,51 +1,69 @@
 import React, { useState } from 'react';
 import { Menu, X, LogIn, User } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-const Header = ({ onOpenAuth, onNavigate, currentView, onScrollToWorkshops }) => {
+const Header = ({ onOpenAuth, onScrollToWorkshops, isAuthenticated }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Separate static links from action links
+  React.useEffect(() => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if(user) setUserRole(user.role);
+  }, [isAuthenticated]);
+
+  const handleScroll = (id) => {
+      // If we are not on home, go home first then scroll (handled by App or simpler logic)
+      if (location.pathname !== '/') {
+          navigate('/');
+          setTimeout(() => {
+              const element = document.getElementById(id);
+              if (element) element.scrollIntoView({ behavior: 'smooth' });
+          }, 300);
+      } else {
+        const element = document.getElementById(id);
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }
+  };
+
   const navItems = [
-    { name: 'Home', action: () => onNavigate('home') },
-    { name: 'Courses', action: () => onNavigate('courses') },
-    { name: 'Workshop', action: onScrollToWorkshops },
-    { name: "Blog", action: () => onNavigate('blog') }, // Keep href for external/static if needed
+    { name: 'Home', path: '/' },
+    { name: 'Courses', path: '/courses' },
+    { name: 'Workshop', action: () => handleScroll('workshops') },
+    { name: "Blog", path: '/blog' },
   ];
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => onNavigate('home')}>
+      <div className="w-full px-6">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo - Fully Left */}
+          <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer">
              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl mr-2">
                P
              </div>
              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-blue-600">
                Prolync
              </span>
-          </div>
+          </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex space-x-2">
+          {/* Desktop Nav - Center Right */}
+          <nav className="hidden md:flex items-center gap-12 ml-auto mr-16">
              {navItems.map((item) => (
-               item.href ? (
-                 <a 
+               item.path ? (
+                 <Link 
                    key={item.name} 
-                   href={item.href} 
-                   className="px-4 py-2 text-gray-600 hover:text-purple-600 hover:bg-gray-50 rounded-full font-medium transition duration-200"
+                   to={item.path} 
+                   className={`text-[15px] font-medium transition duration-200 ${location.pathname === item.path ? 'text-purple-700 font-bold' : 'text-gray-600 hover:text-purple-600'}`}
                  >
                    {item.name}
-                 </a>
+                 </Link>
                ) : (
                  <button
                    key={item.name}
                    onClick={item.action}
-                   className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
-                     (currentView === item.name.toLowerCase() && item.name !== 'Workshop') // Crude active check, fine for now
-                       ? 'bg-purple-50 text-purple-700 shadow-sm ring-1 ring-purple-100' 
-                       : 'text-gray-600 hover:text-purple-600 hover:bg-gray-50'
-                   }`}
+                   className="text-[15px] font-medium text-gray-600 hover:text-purple-600 transition duration-200"
                  >
                    {item.name}
                  </button>
@@ -53,22 +71,29 @@ const Header = ({ onOpenAuth, onNavigate, currentView, onScrollToWorkshops }) =>
              ))}
           </nav>
 
-          {/* Login Button (Desktop) */}
+          {/* Desktop Auth Buttons - Fully Right */}
           <div className="hidden md:flex items-center">
-            <button 
-              onClick={onOpenAuth}
-              className="flex items-center space-x-2 text-gray-700 hover:text-purple-600 font-medium px-4 py-2 rounded-full border border-gray-200 hover:border-purple-200 hover:bg-purple-50 transition duration-150"
-            >
-              <User size={18} />
-              <span>Login</span>
-            </button>
+            {isAuthenticated ? (
+                <Link 
+                  to={userRole === 'admin' ? '/admin-dashboard' : userRole === 'lecturer' ? '/lecturer-dashboard' : '/dashboard'}
+                  className="flex items-center space-x-2 text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:shadow-lg hover:shadow-purple-500/30 font-medium px-6 py-2.5 rounded-full transition-all duration-300 transform hover:-translate-y-0.5"
+                >
+                  <User size={18} />
+                  <span>Dashboard</span>
+                </Link>
+            ) : (
+                <button 
+                  onClick={onOpenAuth}
+                  className="flex items-center gap-2 text-gray-700 hover:text-purple-600 font-medium px-6 py-2 rounded-full border border-gray-200 hover:border-purple-200 hover:bg-purple-50 transition duration-150"
+                >
+                  <LogIn size={18} />
+                  <span>Login</span>
+                </button>
+            )}
           </div>
 
-          {/* Mobile Menu Button + Login Icon */}
+          {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center space-x-4">
-             <button onClick={onOpenAuth} className="text-gray-700 hover:text-purple-600">
-                <User size={24} />
-             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-purple-600 focus:outline-none"
@@ -81,26 +106,52 @@ const Header = ({ onOpenAuth, onNavigate, currentView, onScrollToWorkshops }) =>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 absolute w-full left-0 shadow-lg">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="md:hidden bg-white border-t border-gray-100 absolute w-full left-0 shadow-lg h-screen px-6 py-6">
+          <div className="flex flex-col space-y-4">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50"
-              >
-                {item.name}
-              </a>
+               item.path ? (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-lg font-medium text-gray-700 py-2 border-b border-gray-50"
+                >
+                  {item.name}
+                </Link>
+               ) : (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    item.action();
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-left text-lg font-medium text-gray-700 py-2 border-b border-gray-50"
+                >
+                  {item.name}
+                </button>
+               )
             ))}
-            <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  onOpenAuth();
-                }}
-                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-purple-600 hover:bg-purple-50 font-semibold"
-            >
-              Login / Register
-            </button>
+             <div className="mt-4 pt-4">
+                {isAuthenticated ? (
+                    <Link
+                        to={userRole === 'admin' ? '/admin-dashboard' : userRole === 'lecturer' ? '/lecturer-dashboard' : '/dashboard'}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex w-full items-center justify-center gap-2 bg-purple-600 text-white py-3 rounded-xl font-bold"
+                    >
+                    Dashboard
+                    </Link>
+                ) : (
+                <button
+                    onClick={() => {
+                        setIsMenuOpen(false);
+                        onOpenAuth();
+                    }}
+                    className="flex w-full items-center justify-center gap-2 border border-gray-200 text-gray-700 py-3 rounded-xl font-bold"
+                >
+                    Login / Register
+                </button>
+                )}
+             </div>
           </div>
         </div>
       )}

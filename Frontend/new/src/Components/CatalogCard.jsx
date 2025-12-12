@@ -46,7 +46,8 @@ const CatalogCard = ({ course }) => {
          {/* Meta Row */}
          <div className="flex items-center gap-4 text-xs text-slate-500 font-medium mb-5">
             <div className="flex items-center gap-1.5">
-               <Clock size={14} className="text-[#4F46E5]" />
+               <Clock size={14} className="text-[#4F46E5]"/>
+                                          
                <span>{course.duration}</span>
             </div>
             <div className="flex items-center gap-1.5">

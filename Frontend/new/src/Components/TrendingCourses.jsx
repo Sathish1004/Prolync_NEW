@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Sparkles, TrendingUp, Clock, Users, Star } from 'lucide-react';
+import { ArrowRight, Sparkles, TrendingUp, Clock, Users, Star, GraduationCap, Award, BookOpen, Video, Laptop, Code, FileText } from 'lucide-react';
 import CourseCard from './CourseCard';
 import { courses } from '../data/courses';
 
-const TrendingCourses = ({ onNavigate }) => {
+const TrendingCourses = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Paid');
   
   const tabs = [
     { id: 'Paid', label: 'Paid Courses', icon: TrendingUp },
-    { id: 'Combo', label: 'Combo Courses', icon: Sparkles },
     { id: 'Free', label: 'Free Courses', icon: Star }
   ];
 
@@ -17,24 +18,17 @@ const TrendingCourses = ({ onNavigate }) => {
   const filteredCourses = courses.filter(course => {
     if (activeTab === 'Paid') return course.category === 'Paid';
     if (activeTab === 'Free') return course.category === 'Free';
-    if (activeTab === 'Combo') return course.category === 'Combo';
     return course.category === activeTab;
   });
-
-  // Course stats for the header
-  const courseStats = [
-    { value: '100+', label: 'Total Courses', icon: '📚' },
-    { value: '4.9', label: 'Avg Rating', icon: '⭐' },
-    { value: '50K+', label: 'Students', icon: '👥' },
-    { value: '98%', label: 'Completion', icon: '🎯' },
-  ];
 
   const [hoveredCourse, setHoveredCourse] = useState(null);
 
   return (
-    <section className="relative py-24 lg:py-32 overflow-hidden">
-      {/* Advanced Background with Gradient Mesh */}
+    <section className="relative py-8 lg:py-12 overflow-hidden">
+      {/* ... (previous background code) ... */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/40 via-white to-cyan-50/30"></div>
+      
+      {/* ... (rest of the component structure until the CTA) ... */}
       
       {/* Animated Gradient Blobs */}
       <motion.div 
@@ -132,35 +126,6 @@ const TrendingCourses = ({ onNavigate }) => {
           </p>
         </motion.div>
 
-        {/* Stats Cards */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
-        >
-          {courseStats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -4, scale: 1.05 }}
-              className="bg-gradient-to-br from-white/80 to-white/40 rounded-2xl p-6 shadow-xl shadow-gray-200/30 border border-white/60 backdrop-blur-sm group hover:shadow-indigo-200/30 transition-all duration-300 relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="text-3xl">{stat.icon}</div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                  <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
         {/* Header Row with Tabs */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -254,7 +219,7 @@ const TrendingCourses = ({ onNavigate }) => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-20 text-center"
         >
-          <div className="inline-flex flex-col sm:flex-row items-center gap-6 bg-gradient-to-br from-white/80 to-white/40 rounded-2xl p-8 shadow-2xl shadow-indigo-100/30 border border-white/60 backdrop-blur-sm max-w-4xl mx-auto relative overflow-hidden">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-6 bg-gradient-to-r from-indigo-50 via-purple-50 to-cyan-50 rounded-2xl p-8 shadow-2xl shadow-indigo-100/30 border border-indigo-100/60 backdrop-blur-sm w-[100%] max-w-7xl mx-auto relative overflow-hidden">
             {/* Animated Background */}
             <motion.div
               className="absolute inset-0"
@@ -268,13 +233,66 @@ const TrendingCourses = ({ onNavigate }) => {
               transition={{ duration: 5, repeat: Infinity }}
             />
             
-            <div className="text-left relative z-10">
+            <div className="text-left relative z-10 max-w-xl">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Ready to Start Learning?</h3>
-              <p className="text-gray-600">Explore our complete catalog of 100+ courses across all categories.</p>
+              <p className="text-gray-600">Explore our complete catalog of 100+ courses .</p>
             </div>
-            <div className="flex gap-4 relative z-10">
+
+            {/* DECORATIVE FLOATING CIRCLES */}
+            <div className="absolute right-0 top-0 bottom-0 w-1/3 overflow-hidden pointer-events-none z-0 hidden lg:block">
+                 {[
+                    { Icon: GraduationCap, size: 80, text: 'text-indigo-600', ring: 'border-indigo-200', top: '10%', right: '15%', delay: 0, duration: 6, y: -20 },
+                    { Icon: Award, size: 60, text: 'text-pink-600', ring: 'border-pink-200', top: '60%', right: '25%', delay: 1, duration: 5, y: 15 },
+                    { Icon: BookOpen, size: 50, text: 'text-blue-600', ring: 'border-blue-200', top: '30%', right: '50%', delay: 2, duration: 7, y: -15 },
+                    { Icon: Video, size: 45, text: 'text-purple-600', ring: 'border-purple-200', top: '80%', right: '10%', delay: 0.5, duration: 5.5, y: 10 },
+                    { Icon: Laptop, size: 55, text: 'text-emerald-600', ring: 'border-emerald-200', top: '20%', right: '70%', delay: 1.5, duration: 6.5, y: -25 },
+                    { Icon: Code, size: 40, text: 'text-orange-600', ring: 'border-orange-200', top: '50%', right: '5%', delay: 2.5, duration: 4.5, y: 12 },
+                    { Icon: FileText, size: 40, text: 'text-cyan-600', ring: 'border-cyan-200', top: '75%', right: '45%', delay: 0.8, duration: 6, y: -10 }
+                 ].map((item, idx) => (
+                    <motion.div
+                        key={idx}
+                        className="absolute flex items-center justify-center"
+                        style={{ 
+                            width: item.size, 
+                            height: item.size,
+                            top: item.top,
+                            right: item.right
+                        }}
+                        animate={{ y: [0, item.y, 0] }}
+                        transition={{ 
+                            duration: item.duration, 
+                            repeat: Infinity, 
+                            ease: "easeInOut",
+                            delay: item.delay 
+                        }}
+                    >
+                        {/* Orbiting Outer Ring */}
+                        <motion.div
+                            className={`absolute -inset-4 rounded-full border border-dashed ${item.ring} opacity-60`}
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 10 + idx * 2, repeat: Infinity, ease: "linear" }}
+                        />
+                        
+                        {/* 3D Glass Bubble */}
+                        <div className={`relative w-full h-full rounded-full bg-gradient-to-br from-white via-white/80 to-white/40 backdrop-blur-md shadow-[0_8px_32px_rgba(31,38,135,0.15)] border border-white/60 flex items-center justify-center ${item.text}`}>
+                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/50 to-white opacity-80" />
+                             <item.Icon size={item.size * 0.5} strokeWidth={1.5} className="relative z-10 drop-shadow-sm" />
+                        </div>
+
+                        {/* Tiny Satellite Dot */}
+                        <motion.div 
+                            className={`absolute w-2 h-2 rounded-full ${item.text.replace('text-', 'bg-')} top-0 right-0`}
+                            animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                            style={{ top: -5, right: '20%' }}
+                        />
+                    </motion.div>
+                 ))}
+            </div>
+
+            <div className="flex gap-4 relative z-10 sm:absolute sm:left-1/2 sm:top-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2">
               <motion.button
-                onClick={() => onNavigate('courses')}
+                onClick={() => navigate('/courses')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="group inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/50 transition-all duration-300 relative overflow-hidden"
@@ -285,13 +303,6 @@ const TrendingCourses = ({ onNavigate }) => {
                 />
                 <span className="relative z-10">Explore All Courses</span>
                 <ArrowRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 bg-gradient-to-br from-white to-gray-50 text-gray-800 font-semibold rounded-xl border border-gray-200 shadow-lg shadow-gray-200/30 hover:shadow-xl hover:shadow-gray-300/30 transition-all duration-300"
-              >
-                View Pricing
               </motion.button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import { Link } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -9,26 +10,71 @@ const HeroCarousel = () => {
   const slides = [
     {
       id: 1,
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1952&q=80",
-      title: "Full Stack Development",
-      subtitle: "Master Frontend & Backend with React, Node.js, and MongoDB."
+      courseId: 5, // AI
+      image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+      title: "Artificial Intelligence (AI)",
+      subtitle: "Shape the future with Machine Learning, Neural Networks, and GenAI."
     },
     {
       id: 2,
-      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-      title: "Python Programming",
-      subtitle: "From Basics to Advanced: The language of AI & Data Science."
+      courseId: 6, // Data Science
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+      title: "Data Science & Analytics",
+      subtitle: "Turn raw data into actionable insights with Python and Big Data tools."
     },
     {
       id: 3,
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-      title: "Data Science & AI",
-      subtitle: "Unlock the power of data with Deep Learning and MLOps."
+      courseId: 1, // MERN
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1952&q=80",
+      title: "Full Stack Web Development",
+      subtitle: "Build modern, scalable applications with the MERN Stack."
+    },
+    {
+      id: 4,
+      courseId: 7, // Java
+      image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+      title: "Java Programming",
+      subtitle: "Master Object-Oriented Programming and build robust enterprise systems."
+    },
+    {
+      id: 5,
+      courseId: 8, // SQL
+      image: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+      title: "SQL & Database Management",
+      subtitle: "Design, query, and optimize databases with MySQL and PostgreSQL."
+    },
+    {
+      id: 6,
+      courseId: 9, // C/C++
+      image: "https://images.unsplash.com/photo-1610563166150-b34df4f3bcd6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+      title: "C / C++ Programming",
+      subtitle: "Dive deep into system programming and high-performance computing."
     }
   ];
 
   return (
-    <div className="w-full h-[50vh] md:h-[90vh]">
+    <div className="w-full h-[55vh] md:h-[70vh] hero-carousel">
+      <style>{`
+        .hero-carousel .swiper-button-next,
+        .hero-carousel .swiper-button-prev {
+           width: 32px !important;
+           height: 32px !important;
+           border-radius: 50% !important;
+           color: #7dd3fc !important; /* light blue 300 */
+           border: 1px solid rgba(125, 211, 252, 0.5) !important;
+        }
+        .hero-carousel .swiper-button-next::after,
+        .hero-carousel .swiper-button-prev::after {
+            font-size: 14px !important;
+            font-weight: bold;
+        }
+        .hero-carousel .swiper-button-prev {
+            left: 20px !important;
+        }
+         .hero-carousel .swiper-button-next {
+            right: 20px !important;
+        }
+      `}</style>
       <Swiper
         spaceBetween={0}
         centeredSlides={true}
@@ -61,9 +107,12 @@ const HeroCarousel = () => {
                     <p className="text-lg md:text-xl mb-8 text-gray-200">
                       {slide.subtitle}
                     </p>
-                    <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 transform hover:scale-105 shadow-lg text-lg">
+                    <Link 
+                        to={`/course/${slide.courseId}`}
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 transform hover:scale-105 shadow-lg text-lg inline-block"
+                    >
                       Apply Now
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

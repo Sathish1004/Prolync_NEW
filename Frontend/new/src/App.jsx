@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import TopBanner from './Components/TopBanner';
 import Header from './Components/Header';
 import HeroCarousel from './Components/HeroCarousel';
@@ -8,104 +9,133 @@ import TrendingCourses from './Components/TrendingCourses';
 import Workshops from './Components/Workshops';
 import ScrollBackground from './Components/ScrollBackground';
 import VerifyEmail from './Components/VerifyEmail';
-import CourseCatalog from './Components/CourseCatalog';
+import CourseList from './Components/CourseList';
+import CourseDetails from './Components/CourseDetails';
 import CommunityEcosystem from './Components/CommunityEcosystem';
 import CommunityFeatures from './Components/CommunityFeatures';
-import CertificationSection from './Components/CertificationSection';
+import LogoMarquee from './Components/LogoMarquee';
+import TestimonialSection from './Components/TestimonialSection';
+import BoldTypographyBanner from './Components/BoldTypographyBanner';
+import Footer from './Components/Footer';
 import BlogPage from './Components/BlogPage';
+
+import UserDashboard from './Components/UserDashboard';
+import AdminDashboard from './Components/AdminDashboard';
+import LecturerDashboard from './Components/LecturerDashboard';
+
+// Protected Route Wrapper
+const ProtectedRoute = ({ children, role }) => {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!token || !user) {
+        return <Navigate to="/" replace />;
+    }
+
+    if (role && user.role !== role) {
+        return <Navigate to="/" replace />;
+    }
+
+    return children;
+};
+
+// Layout for Public Pages (Home, Courses, Blog)
+const PublicLayout = ({ children, setIsAuthOpen, isAuthenticated }) => {
+    return (
+        <div className="bg-white min-h-screen font-sans text-gray-900 relative flex flex-col">
+             <ScrollBackground />
+             <div className="relative z-10 flex flex-col min-h-screen">
+                <TopBanner />
+                <Header 
+                    onOpenAuth={() => setIsAuthOpen(true)} 
+                    isAuthenticated={isAuthenticated}
+                    // onNavigate unused now, handled by Links
+                />
+                <main className="flex-grow">
+                    {children}
+                </main>
+                <Chatbot />
+                <Footer />
+             </div>
+        </div>
+    );
+};
 
 function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [currentView, setCurrentView] = useState('home');
-  
-  // Ref and State for Workshops Scroll & Highlight
-  const workshopsRef = useRef(null);
-  const [highlightWorkshops, setHighlightWorkshops] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const location = useLocation();
 
-  const handleNavigate = (view) => {
-    setCurrentView(view);
-    window.scrollTo(0, 0);
-  };
-
-  const scrollToWorkshops = () => {
-    if (currentView !== 'home') {
-        setCurrentView('home');
-        // Allow time for render if switching views
-        setTimeout(() => {
-            if(workshopsRef.current) {
-                workshopsRef.current.scrollIntoView({ behavior: 'smooth' });
-                triggerHighlight();
-            }
-        }, 100);
-    } else {
-        if(workshopsRef.current) {
-            workshopsRef.current.scrollIntoView({ behavior: 'smooth' });
-            triggerHighlight();
-        }
-    }
-  };
-
-  const triggerHighlight = () => {
-      // Small delay to allow scroll to start/finish
-      setTimeout(() => {
-          setHighlightWorkshops(true);
-          // Remove highlight after 2 seconds
-          setTimeout(() => setHighlightWorkshops(false), 2000);
-      }, 500);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) setIsAuthenticated(true);
+  }, []);
 
   return (
-    <div className="bg-white min-h-screen font-sans text-gray-900 relative">
-      <ScrollBackground />
+    <>
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       
-      {/* Content Wrapper ensures it sits above the fixed background */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-          <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
-          
-          {window.location.pathname === '/verify-email' ? (
-              <VerifyEmail />
-          ) : (
-          <>
-          <TopBanner />
-          <Header 
-            onOpenAuth={() => setIsAuthOpen(true)} 
-            onNavigate={handleNavigate} 
-            currentView={currentView} 
-            onScrollToWorkshops={scrollToWorkshops}
-          />
-          
-          <main className="flex-grow">
-        {currentView === 'blog' ? (
-          <BlogPage onNavigate={handleNavigate} />
-        ) : currentView === 'browse_courses' ? (
-          <CourseCatalog />
-        ) : (
-          <>
-            <HeroCarousel />
-            <TrendingCourses onNavigate={handleNavigate} />
-            <Workshops sectionRef={workshopsRef} highlight={highlightWorkshops} />
-            <CommunityEcosystem />
-            <CommunityFeatures />
-            {/* Certification Section */}
-            <CertificationSection />
-          </>
-        )} : (
-          <CourseCatalog />
-        )}
-      </main>
+      <Routes>
+        {/* Landing Page */}
+        <Route path="/" element={
+            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+                <HeroCarousel />
+                <div id="trending"><TrendingCourses /></div>
+                <div id="workshops"><Workshops /></div>
+                <CommunityEcosystem />
+                <LogoMarquee />
+                <CommunityFeatures />
+                <TestimonialSection />
+                <BoldTypographyBanner />
+            </PublicLayout>
+        } />
+        
+        {/* Course Pages */}
+        <Route path="/courses" element={
+             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+                <CourseList />
+             </PublicLayout>
+        } />
+        
+        <Route path="/course/:id" element={
+            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+               <CourseDetails />
+            </PublicLayout>
+        } />
+        
+        {/* Blog Page */}
+        <Route path="/blog" element={
+             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+                <BlogPage />
+             </PublicLayout>
+        } />
 
+        {/* Verification */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
-      <Chatbot />
-      
-      <footer className="bg-gray-900 text-white py-8 mt-auto">
-          <div className="container mx-auto px-4 text-center text-gray-400">
-              {/* <p>&copy; 2024 Prolync. All rights reserved.</p> */}
-          </div>
-      </footer>
-      </>
-      )}
-      </div>
-    </div>
+        {/* Dashboards - Standalone Layouts */}
+        <Route path="/dashboard" element={
+            <ProtectedRoute>
+                <UserDashboard />
+            </ProtectedRoute>
+        } />
+        
+        <Route path="/admin-dashboard" element={
+            <ProtectedRoute role="admin">
+                <AdminDashboard />
+            </ProtectedRoute>
+        } />
+        
+        <Route path="/lecturer-dashboard" element={
+            <ProtectedRoute role="lecturer">
+                <LecturerDashboard />
+            </ProtectedRoute>
+        } />
+
+        {/* Redirect Legacy or Unknown */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
 
