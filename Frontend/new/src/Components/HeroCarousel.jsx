@@ -99,7 +99,7 @@ const HeroCarousel = () => {
               />
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-blue-900/40 flex items-center">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-10xl">
                   <div className="max-w-2xl text-white">
                     <h2 className="text-3xl md:text-5xl font-bold mb-4 animate-fade-in-up">
                       {slide.title}

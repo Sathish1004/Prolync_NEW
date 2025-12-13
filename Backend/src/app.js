@@ -23,17 +23,14 @@ import healthRouter from './routes/health.routes.js'
 import authRouter from './routes/auth.routes.js' // This effectively serves as user routes
 import adminRouter from './routes/admin.routes.js'
 import lecturerRouter from './routes/lecturer.routes.js'
+import blogRouter from './routes/blog.routes.js'
 
 // routes declaration
 app.use("/api/v1/health", healthRouter)
-app.use("/api/user", authRouter) // Remapping existing auth to /api/user as requested, also keeping /api for backward compat if needed? 
-// Actually user asked for /api/user/login, existing is /api/login. 
-// I will mount authRouter to /api/user AND /api/v1/auth to be safe, or just /api/user.
-// existing auth.routes.js has /register and /login. So /api/user/login works if mounted at /api/user.
-
 app.use("/api/user", authRouter)
 app.use("/api/admin", adminRouter)
 app.use("/api/lecturer", lecturerRouter)
+app.use("/api/blogs", blogRouter)
 
 // Keep legacy /api for frontend backward compatibility if needed, 
 // OR better yet, I should check if I need to update frontend FIRST.

@@ -36,8 +36,8 @@ const Header = ({ onOpenAuth, onScrollToWorkshops, isAuthenticated }) => {
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100">
-      <div className="w-full px-6">
-        <div className="flex justify-between items-center h-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-10xl flex justify-between items-center h-full">
+        <div className="flex justify-between items-center h-20 w-full">
           {/* Logo - Fully Left */}
           <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer">
              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl mr-2">

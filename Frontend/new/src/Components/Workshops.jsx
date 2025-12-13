@@ -77,7 +77,7 @@ const Workshops = ({ sectionRef, highlight }) => {
 
   return (
     <section className="py-20 bg-transparent relative" id="workshops" ref={sectionRef}>
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* SECTION 1: HERO - Split Layout with Circular Frame */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24 relative z-10">

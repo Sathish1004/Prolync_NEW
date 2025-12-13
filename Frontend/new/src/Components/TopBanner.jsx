@@ -4,7 +4,7 @@ const TopBanner = () => {
   return (
     <div className="w-full h-12 bg-gradient-to-r  via-purple-600 to-indigo-700 flex items-center relative px-4 text-white overflow-hidden shadow-md">
       {/* Scrolling Text Container */}
-      <div className="w-full overflow-hidden flex items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-10xl flex justify-between items-center text-xs sm:text-sm">
         <div className="w-full animate-marquee whitespace-nowrap flex items-center">
             <span className="text-xs md:text-sm font-medium tracking-wide mx-4 flex items-center gap-2">
               <span className="animate-bounce">🚀</span> Secure your future with Intel AIML — Master GenAI, Agentic AI 🤖, Deep Learning 🧠, LLM & MLOps <span className="animate-pulse">✨</span>

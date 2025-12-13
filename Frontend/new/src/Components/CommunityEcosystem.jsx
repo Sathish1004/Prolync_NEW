@@ -434,7 +434,7 @@
 //         );
 //       })}
 
-//       <div className="container mx-auto px-4 max-w-[1400px] relative z-10">
+//       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-10xl relative z-10">
         
 //         {/* Section Header */}
 //         <motion.div 
@@ -1098,26 +1098,7 @@ const CommunityEcosystem = () => {
           ))}
         </svg>
 
-        {/* Floating Educational Keywords (Left Side) */}
-        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-             {['learning', 'skills', 'practice', 'build', 'explore', 'mentor', 'innovate', 'projects', 'coding', 'career', 'growth', 'AI-guided', 'teamwork'].map((word, i) => (
-             <div
-                key={i}
-                className="absolute font-semibold text-indigo-900/60"
-                style={{
-                  left: `${2 + (i * 8) % 35}%`, // Slightly wider spread on left
-                  top: `${10 + (i * 9) % 80}%`, // Wider vertical spread
-                  fontSize: `${12 + (i % 4)}px`, // Larger font
-                  letterSpacing: '0.5px',
-                  animation: `floatWord ${2.5 + (i % 3)}s ease-in-out infinite alternate`,
-                  animationDelay: `${i * 0.2}s`,
-                  zIndex: 20 // Bring them up slightly
-                }}
-              >
-                {word}
-              </div>
-            ))}
-        </div>
+        {/* Floating Educational Keywords Removed */}
       </div>
 
       <style jsx>{`
@@ -1127,7 +1108,7 @@ const CommunityEcosystem = () => {
         }
       `}</style>
 
-      <div className="container mx-auto px-4 max-w-7xl relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-10xl relative z-10">
         {/* Enhanced Header */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -1218,6 +1199,7 @@ const CommunityEcosystem = () => {
               
               {/* Animated Border Glow */}
               <motion.div
+              
                 className="absolute inset-0 rounded-3xl"
                 animate={{
                   boxShadow: [

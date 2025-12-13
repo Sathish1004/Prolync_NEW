@@ -139,7 +139,7 @@ const MarqueeRow = ({ items, speed = 20, direction = "left", type = "tech", heig
 const LogoMarquee = () => {
   return (
     <section className="py-12 md:py-20 relative overflow-hidden bg-slate-50">
-      <div className="container mx-auto px-4 md:px-8">
+      <div className="container mx-auto px-4 md:px-8 max-w-10xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Column: Human Interaction (PhysicsWallah Style) */}
@@ -149,58 +149,58 @@ const LogoMarquee = () => {
                <div className="absolute inset-0 border-[3px] border-dotted border-blue-200 rounded-full animate-spin-slow opacity-30 scale-125"></div>
                <div className="absolute inset-0 border-[2px] border-dotted border-purple-200 rounded-full animate-reverse-spin opacity-30 scale-90"></div>
 
-               {/* Mentor Circle */}
-               <motion.div 
-                 className="absolute left-0 lg:left-4 top-1/4 z-10"
-                 animate={{ y: [0, -15, 0] }}
-                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-               >
-                 <div className="relative">
-                   <div className="w-24 h-24 md:w-32 md:h-32 rounded-full p-1 bg-gradient-to-br from-blue-500 to-cyan-400 shadow-xl">
-                      <img 
-                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=crop" 
-                        alt="Mentor" 
-                        className="w-full h-full rounded-full object-cover border-4 border-white"
-                      />
-                   </div>
-                   {/* Mentor Bubble */}
-                   <motion.div 
-                      initial={{ opacity: 0, scale: 0.8, x: -20 }}
-                      whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                      transition={{ delay: 0.5, duration: 0.5 }}
-                      className="absolute -right-32 top-0 bg-blue-900 text-white p-3 rounded-xl rounded-tl-none shadow-lg w-48 z-20"
-                   >
-                     <p className="text-xs font-semibold leading-relaxed">
-                       At Prolync, you learn with structured guidance, real projects, and AI support.
-                     </p>
-                   </motion.div>
-                 </div>
-               </motion.div>
-
-               {/* Student Circle */}
+               {/* Student Circle (Now Second - Bottom Right) */}
                <motion.div 
                  className="absolute right-0 lg:right-4 bottom-1/4 z-10"
                  animate={{ y: [0, 15, 0] }}
                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                >
                  <div className="relative">
-                    <div className="w-20 h-20 md:w-28 md:h-28 rounded-full p-1 bg-gradient-to-br from-purple-500 to-pink-500 shadow-xl">
+                   <div className="w-20 h-20 md:w-28 md:h-28 rounded-full p-1 bg-gradient-to-br from-purple-500 to-pink-500 shadow-xl">
                       <img 
                         src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=256&h=256&auto=format&fit=crop" 
                         alt="Student" 
                         className="w-full h-full rounded-full object-cover border-4 border-white"
                       />
-                    </div>
-                    {/* Student Bubble */}
-                    <motion.div 
+                   </div>
+                   {/* Student Bubble - Positioned to Left */}
+                   <motion.div 
                       initial={{ opacity: 0, scale: 0.8, x: 20 }}
                       whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                      transition={{ delay: 1, duration: 0.5 }}
-                      className="absolute -left-32 -top-16 bg-white text-slate-800 p-3 rounded-xl rounded-br-none shadow-lg w-40 border border-purple-100 z-20"
+                      transition={{ delay: 0.9, duration: 0.3 }}
+                      className="absolute -left-44 -top-10 bg-white text-slate-800 p-3 rounded-xl rounded-br-none shadow-lg w-48 border border-purple-100 z-20"
+                   >
+                     <p className="text-xs font-bold text-slate-900 mb-1">Priya, Student</p>
+                     <p className="text-xs text-slate-600">
+                       Sir, how do I start my learning journey at Prolync?
+                     </p>
+                   </motion.div>
+                 </div>
+               </motion.div>
+
+               {/* Mentor Circle (Now First - Top Left) */}
+               <motion.div 
+                 className="absolute left-0 lg:left-4 top-1/4 z-10"
+                 animate={{ y: [0, -15, 0] }}
+                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+               >
+                 <div className="relative">
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full p-1 bg-gradient-to-br from-blue-500 to-cyan-400 shadow-xl">
+                      <img 
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=crop" 
+                        alt="Mentor" 
+                        className="w-full h-full rounded-full object-cover border-4 border-white"
+                      />
+                    </div>
+                    {/* Mentor Bubble - Positioned to Right */}
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.8, x: -20 }}
+                      whileInView={{ opacity: 1, scale:1, x: 0 }}
+                      transition={{ delay: 2.1, duration: 0.6 }}
+                      className="absolute -right-40 top-0 bg-blue-900 text-white p-3 rounded-xl rounded-tl-none shadow-lg w-48 z-20"
                     >
-                      <p className="text-xs font-bold text-slate-900 mb-1">Priya, Student</p>
-                      <p className="text-xs text-slate-600">
-                        Sir, how do I start my learning journey at Prolync?
+                      <p className="text-xs font-semibold leading-relaxed">
+                        At Prolync, you learn with structured guidance, real projects, and AI support.
                       </p>
                     </motion.div>
                  </div>

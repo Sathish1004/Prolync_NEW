@@ -6,7 +6,7 @@ import { fullCourseData } from '../data/fullCourseData';
 const CourseList = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-        <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="max-w-10xl mx-auto px-6 py-16">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Explore Our Premium Courses</h2>
                 <p className="text-gray-500 max-w-2xl mx-auto">

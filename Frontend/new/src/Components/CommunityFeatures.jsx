@@ -45,7 +45,7 @@ const FloatingIcon = ({ icon: Icon, color, className, delay = 0 }) => (
 const CommunityFeatures = () => {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
-      <div className="container mx-auto px-4 max-w-[1400px] relative z-20">
+      <div className="container mx-auto px-4 max-w-10xl relative z-20">
         
         {/* Header */}
         <div className="text-center mb-20 max-w-3xl mx-auto">

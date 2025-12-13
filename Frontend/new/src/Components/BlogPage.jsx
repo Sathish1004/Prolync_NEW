@@ -143,7 +143,7 @@ const BlogPage = ({ onNavigate }) => {
            ))}
         </div>
 
-        <div className="container mx-auto px-4 py-16 lg:py-24 relative z-10 flex flex-col md:flex-row items-center gap-12">
+        <div className="container mx-auto px-4 py-16 lg:py-24 relative z-10 flex flex-col md:flex-row items-center gap-12 max-w-10xl">
           <div className="flex-1 text-center md:text-left">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -191,7 +191,7 @@ const BlogPage = ({ onNavigate }) => {
       </section>
 
       {/* 2. Featured & Main Content */}
-      <section className="py-16 container mx-auto px-4 max-w-7xl">
+      <section className="py-16 container mx-auto px-4 max-w-10xl">
         
         {/* Featured Post Banner */}
         <motion.div 

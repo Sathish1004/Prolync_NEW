@@ -17,7 +17,8 @@ import LogoMarquee from './Components/LogoMarquee';
 import TestimonialSection from './Components/TestimonialSection';
 import BoldTypographyBanner from './Components/BoldTypographyBanner';
 import Footer from './Components/Footer';
-import BlogPage from './Components/BlogPage';
+import BlogPage from './pages/BlogPage';
+import BlogDetail from './pages/BlogDetail';
 
 import UserDashboard from './Components/UserDashboard';
 import AdminDashboard from './Components/AdminDashboard';
@@ -107,6 +108,12 @@ function App() {
         <Route path="/blog" element={
              <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
                 <BlogPage />
+             </PublicLayout>
+        } />
+        
+        <Route path="/blog/:slug" element={
+             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+                <BlogDetail />
              </PublicLayout>
         } />
 

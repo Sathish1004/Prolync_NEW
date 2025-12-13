@@ -53,7 +53,7 @@ const TestimonialSection = () => {
 
   return (
     <section className="py-24 bg-white relative overflow-hidden">
-      <div className="container mx-auto px-6 lg:px-12">
+      <div className="container mx-auto px-6 lg:px-12 max-w-10xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
           {/* Left Column: Testimonial Text */}

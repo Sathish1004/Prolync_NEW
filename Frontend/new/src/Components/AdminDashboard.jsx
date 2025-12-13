@@ -285,6 +285,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       ]
     },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'blogs', label: 'Blog Management', icon: Layers },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
@@ -538,6 +539,7 @@ const AdminDashboard = () => {
   
   const [users, setUsers] = useState([]);
   const [lecturers, setLecturers] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [notifications, setNotifications] = useState([
     { id: 1, title: 'New user registration', time: '2 min ago', unread: true },
@@ -554,15 +556,17 @@ const AdminDashboard = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
-      const [statsRes, usersRes, lecturersRes] = await Promise.all([
+      const [statsRes, usersRes, lecturersRes, blogsRes] = await Promise.all([
         axios.get('http://localhost:5000/api/admin/stats', config),
         axios.get('http://localhost:5000/api/admin/users', config),
-        axios.get('http://localhost:5000/api/admin/lecturers', config)
+        axios.get('http://localhost:5000/api/admin/lecturers', config),
+        axios.get('http://localhost:5000/api/blogs', config) // Assuming public or admin endpoint is accessible
       ]);
       
       setStats(statsRes.data);
       setUsers(usersRes.data);
       setLecturers(lecturersRes.data);
+      setBlogs(blogsRes.data);
     } catch (error) {
       console.error("Error fetching admin data", error);
       if (error.response?.status === 401) {
@@ -799,6 +803,34 @@ const AdminDashboard = () => {
                   columns={lecturerColumns}
                   onAction={handleTableAction}
                   type="lecturers"
+                />
+              </div>
+            ) : null}
+
+            {/* Blogs Table */}
+            {activeTab === 'blogs' ? (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-gray-900">Blog Management</h2>
+                  <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    Create New Blog
+                  </button>
+                </div>
+                <DataTable 
+                  data={blogs} 
+                  columns={blogColumns}
+                  onAction={(action, id) => {
+                      if (action === 'delete') {
+                          // Placeholder for delete logic
+                          if(window.confirm('Delete this blog?')) {
+                             // Call delete API
+                             axios.delete(`http://localhost:5000/api/blogs/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+                             .then(() => setBlogs(blogs.filter(b => b._id !== id)))
+                             .catch(err => alert('Failed to delete blog'));
+                          }
+                      }
+                  }}
+                  type="blogs"
                 />
               </div>
             ) : null}

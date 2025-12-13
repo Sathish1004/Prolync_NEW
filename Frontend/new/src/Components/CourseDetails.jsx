@@ -7,6 +7,8 @@ import CertificateSection from './CertificateSection';
 import RequirementsSection from './RequirementsSection';
 import { CheckCircle, AlertCircle, PlayCircle } from 'lucide-react';
 
+import EnrollmentCard from './EnrollmentCard';
+
 const CourseDetails = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
@@ -40,7 +42,7 @@ const CourseDetails = () => {
     <div className="min-h-screen bg-gray-50 font-sans pb-20">
         {/* Hero Section */}
         <div className="bg-[#1e1b4b] text-white pt-32 pb-16 px-6">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 items-center">
+            <div className="max-w-10xl mx-auto flex flex-col md:flex-row gap-10 items-center">
                 <div className="md:w-2/3">
                     <span className="bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
                         Best Seller
@@ -83,7 +85,7 @@ const CourseDetails = () => {
 
         {/* Sticky Navigation */}
         <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
-            <div className="max-w-5xl mx-auto px-6">
+            <div className="max-w-10xl mx-auto px-6">
                 <div className="flex gap-8 overflow-x-auto no-scrollbar">
                     {tabs.map(tab => (
                         <button
@@ -103,59 +105,73 @@ const CourseDetails = () => {
         </div>
 
         {/* Content Area */}
-        <div className="max-w-4xl mx-auto px-6 py-10 space-y-16">
-            
-            {/* About Section */}
-            <section id="about" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Course</h2>
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm text-gray-600 leading-relaxed">
-                    {course.about}
-                </div>
-            </section>
+        <div className="max-w-10xl mx-auto px-6 py-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                
+                {/* Main Content (Left Side - 70% approx) */}
+                <div className="lg:col-span-8 space-y-12">
+                    
+                    {/* About Section */}
+                    <section id="about" className="scroll-mt-24">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Course</h2>
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm text-gray-600 leading-relaxed">
+                            {course.about}
+                        </div>
+                    </section>
 
-             {/* Content / Modules Section */}
-             <section id="modules" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Course Modules</h2>
-                <div>
-                    {course.modules.map((module, idx) => (
-                        <AccordionModule 
-                            key={idx} 
-                            module={module} 
-                            index={idx}
-                            isOpen={openModuleIndex === idx}
-                            onClick={() => setOpenModuleIndex(openModuleIndex === idx ? -1 : idx)}
-                        />
-                    ))}
-                </div>
-            </section>
+                     {/* Content / Modules Section */}
+                     <section id="modules" className="scroll-mt-24">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Course Modules</h2>
+                        <div>
+                            {course.modules.map((module, idx) => (
+                                <AccordionModule 
+                                    key={idx} 
+                                    module={module} 
+                                    index={idx}
+                                    isOpen={openModuleIndex === idx}
+                                    onClick={() => setOpenModuleIndex(openModuleIndex === idx ? -1 : idx)}
+                                />
+                            ))}
+                        </div>
+                    </section>
 
-             {/* Certificate Section */}
-             <section id="certificate" className="scroll-mt-24">
-                <CertificateSection />
-            </section>
+                     {/* Certificate Section */}
+                     <section id="certificate" className="scroll-mt-24">
+                        <CertificateSection />
+                    </section>
 
-             {/* Benefits Section */}
-             <section id="benefits" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">What You Will Learn</h2>
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {course.benefits.map((bg, i) => (
-                            <div key={i} className="flex items-start gap-3">
-                                <div className="mt-1 bg-green-100 text-green-600 rounded-full p-1">
-                                    <CheckCircle size={14} />
-                                </div>
-                                <span className="text-gray-700 font-medium">{bg}</span>
+                     {/* Benefits Section */}
+                     <section id="benefits" className="scroll-mt-24">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">What You Will Learn</h2>
+                        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {course.benefits.map((bg, i) => (
+                                    <div key={i} className="flex items-start gap-3">
+                                        <div className="mt-1 bg-green-100 text-green-600 rounded-full p-1">
+                                            <CheckCircle size={14} />
+                                        </div>
+                                        <span className="text-gray-700 font-medium">{bg}</span>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    </section>
+
+                    {/* Requirements Section */}
+                    <section id="requirements" className="scroll-mt-24">
+                        <RequirementsSection />
+                    </section>
+
                 </div>
-            </section>
 
-            {/* Requirements Section */}
-            <section id="requirements" className="scroll-mt-24">
-                <RequirementsSection />
-            </section>
-
+                {/* Sidebar / Right Side (30% approx) - Enrollment Form */}
+                <div className="lg:col-span-4 relative mt-10 lg:mt-0">
+                     <div className="lg:sticky lg:top-[90px] space-y-6">
+                        <EnrollmentCard />
+                     </div>
+                </div>
+            
+            </div>
         </div>
         
         {/* Floating enrollment button for mobile/easy access */}
