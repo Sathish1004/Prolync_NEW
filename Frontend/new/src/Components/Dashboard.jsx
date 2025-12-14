@@ -15,7 +15,7 @@ const Dashboard = () => {
 
         if (token) {
             // Test Protected Route
-            axios.get('http://localhost:5000/api/profile', {
+            axios.get('http://localhost:5001/api/profile', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             .then(res => setMessage(res.data.message))

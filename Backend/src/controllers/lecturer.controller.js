@@ -1,6 +1,8 @@
 import { pool as db } from '../config/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Video from '../models/Video.js';
+import Quiz from '../models/Quiz.js';
 
 // --- Lecturer Register ---
 export const registerLecturer = async (req, res) => {
@@ -93,4 +95,98 @@ export const createCourse = async (req, res) => {
 export const getMyStudents = async (req, res) => {
     // In a real query, we would join enrollments and courses where instructor_id = req.user.id
     res.json({ message: "List of students would appear here" });
+};
+
+// --- Upload Content ---
+export const uploadContent = async (req, res) => {
+    try {
+        const lecturerId = req.user.id;
+        const { courseId, title, description } = req.body;
+
+        // Multer puts files in req.files due to .fields()
+        if (!req.files || !req.files.video) {
+            return res.status(400).json({ message: "Video file is required" });
+        }
+
+        const videoPath = req.files.video[0].path;
+        const notesPath = req.files.notes ? req.files.notes[0].path : null;
+
+        await Video.create({
+            courseId,
+            title,
+            description,
+            videoPath,
+            notesPath,
+            lecturerId
+        });
+
+        res.status(201).json({ message: "Content uploaded successfully and sent for admin approval" });
+
+    } catch (error) {
+        console.error("Upload Content Error:", error);
+        res.status(500).json({ message: "Upload failed. Please try again" });
+    }
+};
+
+// --- Create Quiz ---
+export const createQuiz = async (req, res) => {
+    try {
+        const lecturerId = req.user.id;
+        const { courseId, question, options, correctAnswer } = req.body;
+
+        if (!courseId || !question || !options || !correctAnswer) {
+            return res.status(400).json({ message: "All quiz fields are required" });
+        }
+
+        // Ensure options is an array
+        const opts = Array.isArray(options) ? options : JSON.parse(options);
+
+        await Quiz.create({
+            courseId,
+            question,
+            options: opts,
+            correctAnswer,
+            lecturerId
+        });
+
+        res.status(201).json({ message: "Quiz created successfully" });
+
+    } catch (error) {
+        console.error("Create Quiz Error:", error);
+        res.status(500).json({ message: "Failed to create quiz" });
+    }
+};
+
+// --- Get Content Status ---
+export const getContentStatus = async (req, res) => {
+    try {
+        const lecturerId = req.user.id;
+        const videos = await Video.findAllByLecturer(lecturerId);
+        res.json(videos);
+    } catch (error) {
+        console.error("Get Status Error:", error);
+        res.status(500).json({ message: "Failed to fetch status" });
+    }
+};
+
+// --- Dashboard Stats ---
+export const getDashboardStats = async (req, res) => {
+    try {
+        const lecturerId = req.user.id;
+
+        // Mock stats or quick queries
+        const [courseRows] = await db.query("SELECT COUNT(*) as count FROM courses WHERE instructor_id = ?", [lecturerId]);
+        const [videoRows] = await db.query("SELECT COUNT(*) as count FROM videos WHERE lecturer_id = ?", [lecturerId]);
+
+        res.json({
+            activeCourses: courseRows[0].count,
+            totalContent: videoRows[0].count,
+            totalStudents: 0, // Placeholder
+            earnings: 0 // Placeholder
+        });
+
+    } catch (error) {
+        console.error("Get Stats Error:", error);
+        res.status(500).json({ message: "Failed to fetch stats" });
+    }
 };

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { googleAuth, verifyEmail, register, login } from '../controllers/auth.controller.js';
+import { googleAuth, verifyEmail, register, login, sendOtp, verifyOtp } from '../controllers/auth.controller.js';
 import auth from '../middleware/authMiddleware.js';
 
 const router = Router();
@@ -10,6 +10,8 @@ router.post('/login', login);
 // Maintain existing or placeholder routes
 router.post('/google', googleAuth);
 router.post('/verify-email', verifyEmail);
+router.post('/send-otp', sendOtp);
+router.post('/verify-otp', verifyOtp);
 
 // Protected Route Example
 router.get('/profile', auth, (req, res) => {

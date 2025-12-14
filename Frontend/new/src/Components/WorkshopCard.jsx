@@ -1,7 +1,7 @@
 import React from 'react';
 import { Clock, Globe, ArrowRight } from 'lucide-react';
 
-const WorkshopCard = ({ workshop }) => {
+const WorkshopCard = ({ workshop, onApply }) => {
   return (
     <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden flex flex-col h-full">
       {/* Thumbnail */}
@@ -51,7 +51,10 @@ const WorkshopCard = ({ workshop }) => {
               )}
            </div>
            
-           <button className="flex items-center gap-2 bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300">
+           <button 
+                onClick={onApply}
+                className="flex items-center gap-2 bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300"
+            >
              Apply Now
              <ArrowRight size={16} />
            </button>

@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [role, setRole] = useState('user'); // 'user', 'lecturer', 'admin'
+  const role = 'user'; // Hardcode strictly to user
   const [showPassword, setShowPassword] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
 
@@ -17,7 +17,6 @@ const AuthModal = ({ isOpen, onClose }) => {
      password: '',
      confirmPassword: '',
      phone: '',
-     expertise: '', // For Lecturer
   });
 
   const handleChange = (e) => {
@@ -27,7 +26,7 @@ const AuthModal = ({ isOpen, onClose }) => {
   const handleEmailAuth = async (e) => {
      e.preventDefault();
      
-     const apiBase = 'http://localhost:5000/api';
+     const apiBase = 'http://localhost:5001/api';
      let endpoint = '';
      let payload = {};
 
@@ -37,64 +36,20 @@ const AuthModal = ({ isOpen, onClose }) => {
             alert("Passwords do not match"); return;
          }
          
-         if (role === 'user') {
-             endpoint = `${apiBase}/user/register`; // or /register if keeping legacy
-             // Important: user explicit request said /api/user/register 
-             // But my app.js mounts user routes at /api/user (which points to auth.routes.js containing /register)
-             // So final path is /api/user/register
-             payload = {
-                 full_name: formData.name,
-                 email: formData.email,
-                 password: formData.password,
-                 confirm_password: formData.confirmPassword,
-                 phone: formData.phone
-             };
-         } else if (role === 'lecturer') {
-             endpoint = `${apiBase}/lecturer/register`;
-             payload = {
-                 full_name: formData.name,
-                 email: formData.email,
-                 password: formData.password,
-                 expertise: formData.expertise
-             };
-         } else if (role === 'admin') {
-             // User Request: If trying to "Register" as Admin with valid credentials, just Log In.
-             // We treat Admin Signup as Login for the Seeded Admin.
-             endpoint = `${apiBase}/admin/login`;
-             
-             try {
-                 const res = await axios.post(endpoint, {
-                     email: formData.email,
-                     password: formData.password
-                 });
-                 
-                 if (res.status === 200 || res.data.token) {
-                     alert("Admin Login Success");
-                     localStorage.setItem('token', res.data.token);
-                     localStorage.setItem('user', JSON.stringify(res.data.user));
-                     onClose();
-                     window.location.reload();
-                     return; 
-                 }
-             } catch (e) {
-                 // Log detailed error for debugging
-                 // If specific mismatch, show cleaner error
-                 if (e.response?.status === 400 || e.response?.status === 401) {
-                    alert("Invalid Admin Credentials. Please check your password.");
-                 } else {
-                    const errorMsg = e.response?.data?.message || e.message || "Unknown Error";
-                    alert(`Admin Access Error: ${errorMsg}`);
-                 }
-                 return;
-             }
-         }
+         endpoint = `${apiBase}/user/register`; 
+         payload = {
+             full_name: formData.name,
+             email: formData.email,
+             password: formData.password,
+             confirm_password: formData.confirmPassword,
+             phone: formData.phone
+         };
 
         try {
             const res = await axios.post(endpoint, payload);
             
-            // Check for success (message might vary slightly by controller)
             if (res.status === 201 || res.data.message.includes("Success")) {
-                alert(`${role.charAt(0).toUpperCase() + role.slice(1)} Signup Success`);
+                alert("Signup Success");
                 setIsLogin(true); 
                 setFormData({ ...formData, password: '', confirmPassword: ''});
             } else {
@@ -103,20 +58,12 @@ const AuthModal = ({ isOpen, onClose }) => {
 
          } catch (error) {
              console.error("Signup Error:", error);
-             if (error.response) {
-                 alert(`Server Error: ${error.response.status} - ${error.response.data.message || JSON.stringify(error.response.data)}`);
-             } else if (error.request) {
-                 alert("Network Error: No response from server. Check port 5000.");
-             } else {
-                 alert(`Error: ${error.message}`);
-             }
+             alert(error.response?.data?.message || "Signup Failed");
          }
 
      } else {
          // --- LOGIN LOGIC ---
-         if (role === 'user') endpoint = `${apiBase}/user/login`;
-         if (role === 'lecturer') endpoint = `${apiBase}/lecturer/login`;
-         if (role === 'admin') endpoint = `${apiBase}/admin/login`;
+         endpoint = `${apiBase}/user/login`;
 
          try {
              const res = await axios.post(endpoint, {
@@ -125,14 +72,11 @@ const AuthModal = ({ isOpen, onClose }) => {
              });
              
              if (res.status === 200) {
-                 alert("Login Success");
-                 
-                 // Save to localStorage
                  localStorage.setItem('token', res.data.token);
                  localStorage.setItem('user', JSON.stringify(res.data.user)); // Save user info
                  
-                 onClose();
-                 window.location.reload(); 
+                 if (onLoginSuccess) onLoginSuccess();
+                 else onClose(); 
              } else {
                  alert(res.data.message);
              }
@@ -144,10 +88,10 @@ const AuthModal = ({ isOpen, onClose }) => {
      }
   };
 
-  // Google Login Hook (Keep as is, mostly for Users)
+  // Google Login Hook
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-        // ... existing google logic (assuming it defaults to user role)
+        // ... existing google logic 
     },
     onError: () => console.error("Google Login Failed"),
   });
@@ -168,7 +112,6 @@ const AuthModal = ({ isOpen, onClose }) => {
 
         {/* LEFT SIDE - Illustration Panel */}
         <div className="hidden lg:flex w-1/2 bg-[#F8FAFC] relative items-center justify-center p-12 overflow-hidden border-r border-gray-100">
-             {/* ... (Keep existing illustration code) ... */}
              <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-purple-50 rounded-full blur-3xl opacity-60"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
@@ -202,33 +145,16 @@ const AuthModal = ({ isOpen, onClose }) => {
 
             <div className="max-w-sm mx-auto w-full pt-8"> 
             
-            {/* ROLE TABS */}
-            <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
-                {['user', 'lecturer', 'admin'].map((r) => (
-                    <button
-                        key={r}
-                        onClick={() => setRole(r)}
-                        className={`flex-1 py-2 text-sm font-medium rounded-lg capitalize transition-all ${
-                            role === r 
-                            ? 'bg-white text-indigo-600 shadow-sm' 
-                            : 'text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                        {r}
-                    </button>
-                ))}
-            </div>
-
             {verificationSent ? (
                <div className="text-center animate-fade-in-up">
-                   {/* ... (Keep verification UI) ... */}
+                   {/* Verification Sent UI would go here if needed */}
                </div>
             ) : (
              <>
                 {/* Header */}
                 <div className="mb-6">
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                        {isLogin ? `Login as ${role.charAt(0).toUpperCase() + role.slice(1)}` : `Join as ${role.charAt(0).toUpperCase() + role.slice(1)}`}
+                        {isLogin ? 'Login' : 'Sign Up'}
                     </h2>
                 </div>
 
@@ -238,7 +164,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 {!isLogin && (
                     <div className="animate-fade-in-up">
                         <label className="block text-xs font-bold text-gray-700 mb-1 ml-1 uppercase tracking-wide">
-                            {role === 'lecturer' ? 'Full Name' : 'Full Name'}
+                            Full Name
                         </label>
                         <input 
                             name="name"
@@ -252,22 +178,6 @@ const AuthModal = ({ isOpen, onClose }) => {
                     </div>
                 )}
                 
-                {/* Lecturer Expertise Field */}
-                {!isLogin && role === 'lecturer' && (
-                    <div className="animate-fade-in-up">
-                        <label className="block text-xs font-bold text-gray-700 mb-1 ml-1 uppercase tracking-wide">Expertise</label>
-                        <input 
-                            name="expertise"
-                            type="text" 
-                            required
-                            value={formData.expertise}
-                            onChange={handleChange}
-                            className="w-full bg-[#F3F4F6] border border-transparent rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-medium"
-                            placeholder="e.g. Web Development"
-                        />
-                    </div>
-                )}
-
                 <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1 ml-1 uppercase tracking-wide">Email Address</label>
                     <input 
@@ -281,7 +191,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                     />
                 </div>
 
-                {!isLogin && role === 'user' && (
+                {!isLogin && (
                     <div className="animate-fade-in-up">
                         <label className="block text-xs font-bold text-gray-700 mb-1 ml-1 uppercase tracking-wide">Phone Number</label>
                         <input 
@@ -342,6 +252,38 @@ const AuthModal = ({ isOpen, onClose }) => {
                     className="w-full bg-gradient-to-r from-[#16A34A] to-[#22C55E] text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-green-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 mt-6 text-sm tracking-wide uppercase"
                 >
                     {isLogin ? 'Login' : 'Create Account'}
+                </button>
+
+                <div className="relative flex py-5 items-center">
+                    <div className="flex-grow border-t border-gray-300"></div>
+                    <span className="flex-shrink-0 mx-4 text-gray-400 text-xs">OR</span>
+                    <div className="flex-grow border-t border-gray-300"></div>
+                </div>
+
+                <button 
+                    type="button"
+                    onClick={() => window.location.href = "http://localhost:5001/auth/google"}
+                    className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 font-bold py-3.5 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300"
+                >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                            fill="#EA4335"
+                            d="M24 12.276c0-1.084-.09-2.008-.275-2.909H12.21v5.52h6.636c-.287 1.554-1.127 2.853-2.395 3.696v3.072h3.864C22.614 20.064 24 16.273 24 12.276Z"
+                        />
+                        <path
+                            fill="#34A853"
+                            d="M12.21 24c3.24 0 5.957-1.063 7.935-2.895l-3.864-3.072c-1.08.729-2.472 1.164-4.071 1.164-3.141 0-5.805-2.124-6.756-4.992H1.47v3.084C3.477 21.084 7.575 24 12.21 24Z"
+                        />
+                        <path
+                            fill="#FBBC05"
+                            d="M5.454 14.205c-.244-.729-.381-1.503-.381-2.205s.138-1.476.381-2.205V6.711H1.47C.528 8.448 0 10.323 0 12.276s.528 3.828 1.47 5.565l3.984-3.636Z"
+                        />
+                        <path
+                            fill="#4285F4"
+                            d="M12.21 4.764c1.761 0 3.321.603 4.569 1.776l3.414-3.468C18.156 1.119 15.441 0 12.21 0 7.575 0 3.477 2.916 1.47 6.711l3.984 3.636c.951-2.868 3.615-4.992 6.756-4.992Z"
+                        />
+                    </svg>
+                    Continue with Google
                 </button>
 
                 </form>

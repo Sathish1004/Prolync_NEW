@@ -1,21 +1,26 @@
 import { pool } from '../config/db.js';
 
 const User = {
-    create: async ({ name, email, password, googleId, picture, isVerified, verificationToken, tokenExpires }) => {
+    create: async ({ name, email, password, googleId, picture, isVerified, verificationToken, tokenExpires, mobile, qualification, profile, graduationYear, language }) => {
         const query = `
-            INSERT INTO users (name, email, password, google_id, picture, is_verified, verification_token, token_expires)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO users (full_name, email, password, google_id, picture, is_verified, verification_token, token_expires, mobile, qualification, profile, graduation_year, language)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         // Convert undefined to null for database
         const values = [
-            name,
+            name, // Maps to full_name
             email,
             password || null,
             googleId || null,
             picture || null,
             isVerified ? 1 : 0,
             verificationToken || null,
-            tokenExpires || null
+            tokenExpires || null,
+            mobile || null,
+            qualification || null,
+            profile || null,
+            graduationYear || null,
+            language || null
         ];
 
         const [result] = await pool.execute(query, values);
@@ -27,7 +32,12 @@ const User = {
             googleId,
             isVerified,
             verificationToken,
-            tokenExpires
+            tokenExpires,
+            mobile,
+            qualification,
+            profile,
+            graduationYear,
+            language
         };
     },
 
@@ -69,12 +79,17 @@ const User = {
             isVerified: !!user.is_verified,
             verificationToken: user.verification_token,
             tokenExpires: user.token_expires,
+            mobile: user.mobile,
+            qualification: user.qualification,
+            profile: user.profile,
+            graduationYear: user.graduation_year,
+            language: user.language,
 
             // Helper to match Mongoose .save() pattern
             save: async function () {
                 const updateQuery = `
                     UPDATE users SET 
-                    name=?, email=?, password=?, picture=?, google_id=?, is_verified=?, verification_token=?, token_expires=?
+                    full_name=?, email=?, password=?, picture=?, google_id=?, is_verified=?, verification_token=?, token_expires=?, mobile=?, qualification=?, profile=?, graduation_year=?, language=?
                     WHERE id=?
                 `;
                 const updateValues = [
@@ -86,6 +101,11 @@ const User = {
                     this.isVerified ? 1 : 0,
                     this.verificationToken || null,
                     this.tokenExpires || null, // JS Date object works with mysql2
+                    this.mobile || null,
+                    this.qualification || null,
+                    this.profile || null,
+                    this.graduationYear || null,
+                    this.language || null,
                     this._id
                 ];
                 await pool.execute(updateQuery, updateValues);
@@ -108,7 +128,12 @@ const User = {
             googleId: user.google_id,
             isVerified: !!user.is_verified,
             verificationToken: user.verification_token,
-            tokenExpires: user.token_expires
+            tokenExpires: user.token_expires,
+            mobile: user.mobile,
+            qualification: user.qualification,
+            profile: user.profile,
+            graduationYear: user.graduation_year,
+            language: user.language
         };
     }
 };

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CheckCircle, ArrowRight, Code, Terminal, Database, Cloud } from 'lucide-react';
 import WorkshopCard from './WorkshopCard';
+import WorkshopEnrollment from './WorkshopEnrollment';
+import { AnimatePresence } from 'framer-motion';
 
 const Workshops = ({ sectionRef, highlight }) => {
+  const [selectedWorkshop, setSelectedWorkshop] = useState(null);
+
   const workshopData = [
     {
       id: 1,
@@ -68,22 +72,33 @@ const Workshops = ({ sectionRef, highlight }) => {
 
   // Conditional Classes based on highlight prop
   const applyBtnClass = highlight 
-      ? "px-8 py-4 bg-gradient-to-r from-[#16A34A] to-[#22C55E] text-white rounded-xl font-bold shadow-[0_0_30px_rgba(34,197,94,0.6)] scale-110 ring-4 ring-green-300 transition-all duration-500 ease-in-out text-lg animate-pulse"
-      : "px-8 py-4 bg-gradient-to-r from-[#16A34A] to-[#22C55E] text-white rounded-xl font-bold shadow-lg hover:shadow-green-500/30 hover:scale-[1.03] transition-all duration-300 text-lg";
+      ? "px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-[0_0_30px_rgba(79,70,229,0.6)] scale-110 ring-4 ring-purple-300 transition-all duration-500 ease-in-out text-lg animate-pulse"
+      : "px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:shadow-purple-500/30 hover:scale-[1.03] transition-all duration-300 text-lg";
 
   const heroImageContainerClass = highlight
-      ? "relative w-full h-full rounded-full border-[8px] border-indigo-200 shadow-[0_0_60px_rgba(99,102,241,0.6)] overflow-hidden z-10 scale-105 transition-all duration-700 ease-in-out"
-      : "relative w-full h-full rounded-full border-[8px] border-white shadow-2xl overflow-hidden z-10 animate-float-slow transition-all duration-1000";
+      ? "relative w-full h-full rounded-2xl border-[8px] border-indigo-200 shadow-[0_0_60px_rgba(99,102,241,0.6)] overflow-hidden z-10 scale-105 transition-all duration-700 ease-in-out"
+      : "relative w-full h-full rounded-2xl border-[8px] border-white shadow-2xl overflow-hidden z-10 animate-float-slow transition-all duration-1000";
 
   return (
     <section className="py-20 bg-transparent relative" id="workshops" ref={sectionRef}>
+      
+      {/* Workshop Enrollment Modal */}
+      <AnimatePresence>
+        {selectedWorkshop && (
+            <WorkshopEnrollment 
+                workshop={selectedWorkshop} 
+                onClose={() => setSelectedWorkshop(null)} 
+            />
+        )}
+      </AnimatePresence>
+
       <div className="container max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* SECTION 1: HERO - Split Layout with Circular Frame */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24 relative z-10">
             
             {/* Left Column: Text Block */}
-            <div className="text-left animate-fade-in-up">
+            <div className="text-left animate-fade-in-up order-2 lg:order-1">
                 <span className="text-purple-600 font-bold tracking-wider uppercase text-sm mb-2 block">Skill Upgrade</span>
                 <h1 className="text-5xl md:text-6xl font-extrabold text-[#0A2540] mb-6 leading-tight tracking-tight">
                     Workshops to Upgrade<br />
@@ -95,8 +110,12 @@ const Workshops = ({ sectionRef, highlight }) => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-6 mb-10">
-                   <button className={applyBtnClass}>
-                       Apply Now
+                   {/* Scroll to grid on 'Apply Now' from Hero */}
+                   <button 
+                        onClick={() => document.getElementById('workshop-grid').scrollIntoView({ behavior: 'smooth' })}
+                        className={applyBtnClass}
+                   >
+                       Explore Workshops
                    </button>
                     
                     {/* Schedule Button Container with Hover Card */}
@@ -181,10 +200,10 @@ const Workshops = ({ sectionRef, highlight }) => {
             </div>
 
             {/* Right Column: Circular Hero Visual */}
-            <div className={`relative flex justify-center lg:justify-end animate-fade-in-up delay-200 ${highlight ? 'z-50' : ''}`}>
+            <div className={`relative flex justify-center lg:justify-end animate-fade-in-up delay-200 order-1 lg:order-2 ${highlight ? 'z-50' : ''}`}>
                 
                 {/* Main Circular Image Frame */}
-                <div className="relative w-[400px] h-[400px] md:w-[500px] md:h-[500px]">
+                <div className="relative w-full max-w-lg aspect-square">
                     
                     {/* Decorative Blur Glows */}
                     <div className="absolute top-10 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
@@ -238,14 +257,18 @@ const Workshops = ({ sectionRef, highlight }) => {
         </div>
 
         {/* SECTION 2: GRID */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12" id="workshop-grid">
             <h2 className="text-3xl font-bold text-[#0A2540]">Popular Workshops</h2>
             <p className="text-slate-500 mt-2">Choose from our wide range of expert-led sessions</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {workshopData.map(workshop => (
-                <WorkshopCard key={workshop.id} workshop={workshop} />
+                <WorkshopCard 
+                    key={workshop.id} 
+                    workshop={workshop} 
+                    onApply={() => setSelectedWorkshop(workshop)}
+                />
             ))}
         </div>
 

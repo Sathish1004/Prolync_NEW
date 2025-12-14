@@ -1,6 +1,66 @@
 import { pool as db } from '../config/db.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import Video from '../models/Video.js';
+
+// ... existing code ...
+
+// --- Content Approval ---
+export const getAllContent = async (req, res) => {
+    try {
+        const videos = await Video.findAllWithLecturers();
+        res.json(videos);
+    } catch (error) {
+        console.error("Get All Content Error:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
+export const getPendingContent = async (req, res) => {
+    try {
+        const query = `
+            SELECT v.*, l.full_name as lecturer_name 
+            FROM videos v 
+            JOIN lecturers l ON v.lecturer_id = l.id 
+            WHERE v.status = 'PENDING' 
+            ORDER BY v.created_at DESC
+        `;
+        const [rows] = await db.execute(query);
+        res.json(rows);
+    } catch (error) {
+        console.error("Get Pending Content Error:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
+export const approveContent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const success = await Video.updateStatus(id, 'APPROVED');
+        if (success) {
+            res.json({ message: "Content approved and published successfully" });
+        } else {
+            res.status(404).json({ message: "Content not found" });
+        }
+    } catch (error) {
+        console.error("Approve Content Error:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
+export const rejectContent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const success = await Video.updateStatus(id, 'REJECTED');
+        if (success) {
+            res.json({ message: "Content rejected" });
+        } else {
+            res.status(404).json({ message: "Content not found" });
+        }
+    } catch (error) {
+        console.error("Reject Content Error:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
 
 // --- Admin Login ---
 export const loginAdmin = async (req, res) => {
@@ -42,16 +102,28 @@ export const loginAdmin = async (req, res) => {
 // --- Admin Dashboard Stats ---
 export const getAdminStats = async (req, res) => {
     try {
+        console.log("Fetching Admin Stats...");
         const [users] = await db.query("SELECT COUNT(*) as count FROM users");
         const [lecturers] = await db.query("SELECT COUNT(*) as count FROM lecturers");
         const [courses] = await db.query("SELECT COUNT(*) as count FROM courses");
-        const [payments] = await db.query("SELECT COUNT(*) as count FROM payments"); // Placeholder for now
+        // const [payments] = await db.query("SELECT COUNT(*) as count FROM payments"); // Placeholder for now
+        const payments = [{ count: 0 }];
+
+        console.log("Stats Fetched:", {
+            users: users[0].count,
+            lecturers: lecturers[0].count
+        });
 
         res.json({
             totalUsers: users[0].count,
             totalLecturers: lecturers[0].count,
             totalCourses: courses[0].count,
-            totalPayments: payments[0].count
+            totalPayments: payments[0].count,
+            debug: {
+                dbName: process.env.DB_NAME,
+                dbHost: process.env.DB_HOST,
+                usersCount: users[0].count
+            }
         });
     } catch (error) {
         console.error("Stats Error:", error);
@@ -62,9 +134,12 @@ export const getAdminStats = async (req, res) => {
 // --- Get All Users ---
 export const getAllUsers = async (req, res) => {
     try {
+        console.log("Fetching All Users...");
         const [rows] = await db.query("SELECT id, full_name, email, phone, status, created_at FROM users");
+        console.log(`Found ${rows.length} users`);
         res.json(rows);
     } catch (error) {
+        console.error("Users Fetch Error:", error);
         res.status(500).json({ message: "Error fetching users" });
     }
 };

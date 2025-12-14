@@ -1,199 +1,9 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import { 
-//   Users, BookOpen, DollarSign, Activity, Search, Bell, 
-//   CheckCircle, XCircle, MoreVertical, Shield
-// } from 'lucide-react';
-// import { motion } from 'framer-motion';
-
-// const StatCard = ({ title, value, icon: Icon, color }) => (
-//   <motion.div 
-//     initial={{ y: 20, opacity: 0 }}
-//     animate={{ y: 0, opacity: 1 }}
-//     className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
-//   >
-//     <div className={`p-4 rounded-xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600`}>
-//       <Icon size={24} className={`text-${color.replace('bg-', 'text-').replace('10', '600')}`} /> {/* Crude color fix */}
-//     </div>
-//     <div>
-//       <p className="text-gray-500 text-sm font-medium">{title}</p>
-//       <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
-//     </div>
-//   </motion.div>
-// );
-
-// const AdminDashboard = () => {
-//   const [stats, setStats] = useState({ totalUsers: 0, totalLecturers: 0, totalCourses: 0, totalPayments: 0 });
-//   const [users, setUsers] = useState([]);
-//   const [lecturers, setLecturers] = useState([]);
-//   const [activeTab, setActiveTab] = useState('users');
-
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   const fetchData = async () => {
-//     try {
-//       const token = localStorage.getItem('token');
-//       const config = { headers: { Authorization: `Bearer ${token}` } };
-      
-//       const statsRes = await axios.get('http://localhost:5000/api/admin/stats', config);
-//       setStats(statsRes.data);
-      
-//       const usersRes = await axios.get('http://localhost:5000/api/admin/users', config);
-//       setUsers(usersRes.data);
-      
-//       const lecturersRes = await axios.get('http://localhost:5000/api/admin/lecturers', config);
-//       setLecturers(lecturersRes.data);
-
-//     } catch (error) {
-//       console.error("Error fetching admin data", error);
-//       if (error.response && error.response.status === 401) {
-//           alert("Session expired. Please login again.");
-//           localStorage.clear();
-//           window.location.href = '/';
-//       }
-//     }
-//   };
-
-//   const handleLogout = () => {
-//     localStorage.removeItem('token');
-//     localStorage.removeItem('user');
-//     window.location.reload(); // Refresh to trigger auth check in App.jsx
-//   };
-
-//   // Admin Actions
-//   const toggleUserStatus = async (id, currentStatus) => {
-//       try {
-//           const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
-//           const token = localStorage.getItem('token');
-//           await axios.put(`http://localhost:5000/api/admin/user/${id}/status`, { status: newStatus }, { headers: { Authorization: `Bearer ${token}` } });
-//           setUsers(users.map(u => u.id === id ? { ...u, status: newStatus } : u));
-//       } catch (error) {
-//           alert('Failed to update status');
-//       }
-//   };
-
-//   const deleteUser = async (id) => {
-//       if(!window.confirm("Are you sure you want to delete this user?")) return;
-//       try {
-//           const token = localStorage.getItem('token');
-//           await axios.delete(`http://localhost:5000/api/admin/user/${id}`, { headers: { Authorization: `Bearer ${token}` } });
-//           setUsers(users.filter(u => u.id !== id));
-//       } catch (error) {
-//           alert('Failed to delete user');
-//       }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 p-6 md:p-10 font-sans">
-//       <header className="flex justify-between items-center mb-10">
-//         <div>
-//           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-//           <p className="text-gray-500">Overview of system performance</p>
-//         </div>
-//         <div className="flex items-center gap-4">
-//             <button 
-//                 onClick={handleLogout}
-//                 className="px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors"
-//             >
-//                 Logout
-//             </button>
-//             <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">A</div>
-//         </div>
-//       </header>
-
-//       {/* Stats Grid */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-//         <StatCard title="Total Users" value={stats.totalUsers} icon={Users} color="bg-blue-100 text-blue-600" />
-//         <StatCard title="Total Lecturers" value={stats.totalLecturers} icon={Shield} color="bg-purple-100 text-purple-600" />
-//         <StatCard title="Total Courses" value={stats.totalCourses} icon={BookOpen} color="bg-orange-100 text-orange-600" />
-//         <StatCard title="Total Revenue" value={stats.totalPayments} icon={DollarSign} color="bg-green-100 text-green-600" />
-//       </div>
-
-//       {/* Tables Section */}
-//       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-//         <div className="border-b border-gray-100 p-4 flex gap-4">
-//             <button 
-//                 onClick={() => setActiveTab('users')}
-//                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'users' ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:text-gray-900'}`}
-//             >
-//                 Users
-//             </button>
-//             <button 
-//                 onClick={() => setActiveTab('lecturers')}
-//                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'lecturers' ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:text-gray-900'}`}
-//             >
-//                 Lecturers
-//             </button>
-//         </div>
-
-//         <div className="p-6 overflow-x-auto">
-//             <table className="w-full text-left border-collapse">
-//                 <thead>
-//                     <tr className="text-gray-400 text-sm border-b border-gray-100">
-//                         <th className="py-3 font-medium">Name</th>
-//                         <th className="py-3 font-medium">Email</th>
-//                         <th className="py-3 font-medium">Phone</th>
-//                         <th className="py-3 font-medium">Status</th>
-//                         <th className="py-3 font-medium text-right">Action</th>
-//                     </tr>
-//                 </thead>
-//                 <tbody className="text-sm">
-//                     {activeTab === 'users' ? (
-//                         users.map(user => (
-//                             <tr key={user.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-//                                 <td className="py-4 font-medium text-gray-900">{user.full_name}</td>
-//                                 <td className="py-4 text-gray-500">{user.email}</td>
-//                                 <td className="py-4 text-gray-500">{user.phone || '-'}</td>
-//                                 <td className="py-4">
-//                                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.status === 'blocked' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
-//                                         {user.status || 'Active'}
-//                                     </span>
-//                                 </td>
-//                                 <td className="py-4 text-right flex justify-end gap-2">
-//                                     <button 
-//                                         onClick={() => toggleUserStatus(user.id, user.status)}
-//                                         className={`px-3 py-1 rounded text-xs font-medium border ${user.status === 'blocked' ? 'text-green-600 border-green-200 hover:bg-green-50' : 'text-orange-600 border-orange-200 hover:bg-orange-50'}`}
-//                                     >
-//                                         {user.status === 'blocked' ? 'Unblock' : 'Block'}
-//                                     </button>
-//                                     <button 
-//                                         onClick={() => deleteUser(user.id)}
-//                                         className="px-3 py-1 bg-gray-100 text-gray-600 rounded text-xs hover:bg-gray-200"
-//                                     >
-//                                         Delete
-//                                     </button>
-//                                 </td>
-//                             </tr>
-//                         ))
-//                     ) : (
-//                         lecturers.map(lecturer => (
-//                             <tr key={lecturer.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-//                                 <td className="py-4 font-medium text-gray-900">{lecturer.full_name}</td>
-//                                 <td className="py-4 text-gray-500">{lecturer.email}</td>
-//                                 <td className="py-4 text-gray-500"><span className="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs">{lecturer.expertise}</span></td>
-//                                 <td className="py-4 text-gray-500">-</td>
-//                                 <td className="py-4 text-right">
-//                                     <button className="text-indigo-600 hover:underline">Manage</button>
-//                                 </td>
-//                             </tr>
-//                         ))
-//                     )}
-//                 </tbody>
-//             </table>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AdminDashboard;
-
 
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import { 
   Users, BookOpen, DollarSign, Shield, Home, BarChart3, 
   UserCheck, Book, CreditCard, Settings, LogOut, Bell,
@@ -261,6 +71,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       subItems: [
         { id: 'all-users', label: 'All Users' },
         { id: 'lecturers', label: 'Lecturers' },
+        { id: 'lecturer-uploads', label: 'Lecturer Uploads' }, // New
         { id: 'pending-approvals', label: 'Pending Approvals' }
       ]
     },
@@ -379,7 +190,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 };
 
 // Enhanced Data Table Component
-const DataTable = ({ data, columns, onAction, type = 'users' }) => {
+const DataTable = ({ data, columns, onAction, type = 'users', onExportPDF, onExportCSV }) => {
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -420,10 +232,43 @@ const DataTable = ({ data, columns, onAction, type = 'users' }) => {
             )}
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-              <Download size={16} />
-              Export
-            </button>
+            {/* Export Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer transition-colors"
+              >
+                <Download size={16} />
+                Export
+                <ChevronDown size={14} className={`transform transition-transform ${showExportMenu ? 'rotate-180' : ''}`} />
+              </button>
+              
+              <AnimatePresence>
+                {showExportMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                  >
+                    <button
+                      onClick={() => { onExportPDF(); setShowExportMenu(false); }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
+                    >
+                      <FileText size={16} className="text-red-500" />
+                      Export as PDF
+                    </button>
+                    <button
+                      onClick={() => { onExportCSV(); setShowExportMenu(false); }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
+                    >
+                      <div className="w-4 h-4 bg-green-500 rounded-sm flex items-center justify-center text-[8px] text-white font-bold">X</div>
+                      Export as CSV
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
               <UserPlus size={16} />
               Add New
@@ -493,12 +338,6 @@ const DataTable = ({ data, columns, onAction, type = 'users' }) => {
                     <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg">
                       <Edit size={16} />
                     </button>
-                    <button 
-                      onClick={() => onAction?.('delete', item.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                     <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
                       <MoreVertical size={16} />
                     </button>
@@ -541,6 +380,7 @@ const AdminDashboard = () => {
   const [lecturers, setLecturers] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [apiError, setApiError] = useState(null);
   const [notifications, setNotifications] = useState([
     { id: 1, title: 'New user registration', time: '2 min ago', unread: true },
     { id: 2, title: 'Course submission pending', time: '1 hour ago', unread: true },
@@ -553,29 +393,142 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
+      setApiError(null);
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
-      const [statsRes, usersRes, lecturersRes, blogsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/admin/stats', config),
-        axios.get('http://localhost:5000/api/admin/users', config),
-        axios.get('http://localhost:5000/api/admin/lecturers', config),
-        axios.get('http://localhost:5000/api/blogs', config) // Assuming public or admin endpoint is accessible
-      ]);
-      
-      setStats(statsRes.data);
-      setUsers(usersRes.data);
-      setLecturers(lecturersRes.data);
-      setBlogs(blogsRes.data);
-    } catch (error) {
-      console.error("Error fetching admin data", error);
-      if (error.response?.status === 401) {
-        alert("Session expired. Please login again.");
-        localStorage.clear();
-        window.location.href = '/';
+      // 1. Fetch Users (Critical)
+      try {
+        const usersRes = await axios.get('http://localhost:5001/api/admin/users', config);
+        console.log("Users fetched:", usersRes.data);
+        setUsers(usersRes.data);
+      } catch (err) {
+        console.error("Failed to fetch users", err);
       }
+
+      // 2. Fetch Stats
+      try {
+        const statsRes = await axios.get('http://localhost:5001/api/admin/stats', config);
+        console.log("Stats fetched:", statsRes.data);
+        setStats(statsRes.data);
+      } catch (err) {
+        console.error("Failed to fetch stats", err);
+      }
+
+      // 3. Fetch Lecturers
+      try {
+        const lecturersRes = await axios.get('http://localhost:5001/api/admin/lecturers', config);
+        setLecturers(lecturersRes.data);
+      } catch (err) {
+        console.error("Failed to fetch lecturers", err);
+      }
+      
+      // 4. Skip Blogs for now (suspected cause of hang)
+      // const blogsRes = await axios.get('http://localhost:5001/api/blogs', config);
+      // setBlogs(blogsRes.data);
+
+    } catch (error) {
+      console.error("Global fetch error", error);
+      setApiError(error.message);
     }
   };
+
+  const [pendingContent, setPendingContent] = useState([]);
+
+  // ... (existing fetchData) ...
+
+  const fetchPendingContent = async () => {
+      try {
+          const res = await axios.get('http://localhost:5001/api/admin/content/pending', {
+             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          });
+          setPendingContent(res.data);
+      } catch (error) {
+          console.error("Fetch pending error", error);
+      }
+  };
+
+  const handleContentStatus = async (id, status) => {
+      try {
+          const endpoint = status === 'APPROVED' 
+            ? `http://localhost:5001/api/admin/lecturer/upload/${id}/approve`
+            : `http://localhost:5001/api/admin/lecturer/upload/${id}/reject`;
+
+          await axios.put(endpoint, {}, { 
+              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
+          });
+          
+          alert(status === 'APPROVED' ? "Content approved and published successfully" : "Content rejected");
+          
+          // Refresh list based on active tab
+          if (activeTab === 'pending-approvals') {
+              setPendingContent(pendingContent.filter(c => c.id !== id));
+          } else if (activeTab === 'lecturer-uploads') {
+              fetchAllContent();
+          }
+      } catch (error) {
+          console.error("Status Update Error:", error);
+          alert("Failed to update status");
+      }
+  };
+
+  const [allContent, setAllContent] = useState([]);
+
+  const fetchAllContent = async () => {
+      try {
+          const res = await axios.get('http://localhost:5001/api/admin/lecturer/uploads', {
+             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          });
+          setAllContent(res.data);
+      } catch (error) {
+          console.error("Fetch all content error", error);
+      }
+  };
+
+  const exportUsersPDF = () => {
+    const doc = new jsPDF();
+    doc.text("User Management Report", 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+    
+    doc.autoTable({
+      startY: 35,
+      head: [['ID', 'Name', 'Email', 'Phone', 'Status', 'Joined']],
+      body: users.map(user => [
+        user.id,
+        user.full_name,
+        user.email,
+        user.phone || 'N/A',
+        user.status,
+        new Date(user.created_at).toLocaleDateString()
+      ]),
+    });
+
+    doc.save('user-management-report.pdf');
+  };
+
+  const exportUsersCSV = () => {
+    const headers = ['ID,Name,Email,Phone,Status,Joined'];
+    const rows = users.map(user => 
+      `${user.id},"${user.full_name}","${user.email}",${user.phone || 'N/A'},${user.status},${new Date(user.created_at).toLocaleDateString()}`
+    );
+    
+    const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "user_management_report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  useEffect(() => {
+      if (activeTab === 'pending-approvals') fetchPendingContent();
+      if (activeTab === 'lecturer-uploads') fetchAllContent();
+  }, [activeTab]);
+
+  // ... (rest of code) ...
 
   const handleLogout = () => {
     localStorage.clear();
@@ -587,7 +540,7 @@ const AdminDashboard = () => {
       if (!window.confirm("Are you sure you want to delete this item?")) return;
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/admin/user/${id}`, {
+        await axios.delete(`http://localhost:5001/api/admin/user/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(users.filter(u => u.id !== id));
@@ -642,6 +595,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       
       {/* Main Content */}
@@ -766,6 +720,144 @@ const AdminDashboard = () => {
 
           {/* Data Tables Section */}
           <div className="space-y-6">
+
+            {/* Pending Approvals Table */}
+            {activeTab === 'pending-approvals' && (
+               <div>
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Pending Content Approvals</h2>
+                  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <table className="w-full">
+                       <thead className="bg-gray-50 text-gray-700 font-medium">
+                          <tr>
+                             <th className="p-4 text-left">Title</th>
+                             <th className="p-4 text-left">Lecturer</th>
+                             <th className="p-4 text-left">Date</th>
+                             <th className="p-4 text-left">Media</th>
+                             <th className="p-4 text-right">Actions</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-gray-100">
+                          {pendingContent.length === 0 ? (
+                              <tr><td colSpan="5" className="p-8 text-center text-gray-500">No pending content found.</td></tr>
+                          ) : (
+                              pendingContent.map(item => (
+                                 <tr key={item.id} className="hover:bg-gray-50">
+                                    <td className="p-4 font-medium">{item.title}</td>
+                                    <td className="p-4 text-gray-600">{item.lecturer_name}</td>
+                                    <td className="p-4 text-gray-500">{new Date(item.created_at).toLocaleDateString()}</td>
+                                    <td className="p-4 flex gap-2">
+                                       {item.video_path && (
+                                           <a href={`http://localhost:5001/${item.video_path}`} target="_blank" rel="noopener noreferrer" className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100 flex items-center gap-1">
+                                               Video ↗
+                                           </a>
+                                       )}
+                                       {item.notes_path && (
+                                           <a href={`http://localhost:5001/${item.notes_path}`} target="_blank" rel="noopener noreferrer" className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded hover:bg-purple-100 flex items-center gap-1">
+                                               PDF ⬇
+                                           </a>
+                                       )}
+                                    </td>
+                                    <td className="p-4 text-right space-x-2">
+                                       <button 
+                                          onClick={() => handleContentStatus(item.id, 'APPROVED')}
+                                          className="px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded text-sm font-medium transition"
+                                       >
+                                          Approve
+                                       </button>
+                                       <button 
+                                          onClick={() => handleContentStatus(item.id, 'REJECTED')}
+                                          className="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm font-medium transition"
+                                       >
+                                          Reject
+                                       </button>
+                                    </td>
+                                 </tr>
+                              ))
+                          )}
+                       </tbody>
+                    </table>
+                  </div>
+               </div>
+            )}
+
+            {/* Lecturer Uploads Management Table */}
+            {activeTab === 'lecturer-uploads' && (
+               <div>
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Lecturer Content Management</h2>
+                  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <table className="w-full">
+                       <thead className="bg-gray-50 text-gray-700 font-medium">
+                          <tr>
+                             <th className="p-4 text-left">Title</th>
+                             <th className="p-4 text-left">Lecturer</th>
+                             <th className="p-4 text-left">Links</th>
+                             <th className="p-4 text-left">Status</th>
+                             <th className="p-4 text-right">Actions</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-gray-100">
+                          {allContent.length === 0 ? (
+                              <tr><td colSpan="5" className="p-8 text-center text-gray-500">No content found.</td></tr>
+                          ) : (
+                              allContent.map(item => (
+                                 <tr key={item.id} className="hover:bg-gray-50">
+                                    <td className="p-4">
+                                        <p className="font-medium text-gray-900">{item.title}</p>
+                                        <p className="text-xs text-gray-500">{new Date(item.created_at).toLocaleDateString()}</p>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="text-gray-900 font-medium">{item.lecturer_name}</p>
+                                        <p className="text-xs text-gray-500">{item.lecturer_email}</p>
+                                    </td>
+                                    <td className="p-4 flex gap-2">
+                                       {item.video_path && (
+                                           <a href={`http://localhost:5001/${item.video_path}`} target="_blank" rel="noopener noreferrer" className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100 flex items-center gap-1">
+                                               Video ↗
+                                           </a>
+                                       )}
+                                       {item.notes_path && (
+                                           <a href={`http://localhost:5001/${item.notes_path}`} target="_blank" rel="noopener noreferrer" className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded hover:bg-purple-100 flex items-center gap-1">
+                                               PDF ⬇
+                                           </a>
+                                       )}
+                                    </td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                                            item.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
+                                            item.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                                            'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                            {item.status}
+                                        </span>
+                                    </td>
+                                    <td className="p-4 text-right">
+                                       {item.status === 'PENDING' && (
+                                            <div className="space-x-2">
+                                                <button 
+                                                    onClick={async () => { await handleContentStatus(item.id, 'APPROVED'); fetchAllContent(); }}
+                                                    className="px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded text-sm font-medium transition"
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button 
+                                                    onClick={async () => { await handleContentStatus(item.id, 'REJECTED'); fetchAllContent(); }}
+                                                    className="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm font-medium transition"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                       )}
+                                       {item.status !== 'PENDING' && <span className="text-gray-400 text-sm">No Actions</span>}
+                                    </td>
+                                 </tr>
+                              ))
+                          )}
+                       </tbody>
+                    </table>
+                  </div>
+               </div>
+            )}
+
             {/* Users Table */}
             {activeTab === 'all-users' || activeTab === 'dashboard' ? (
               <div>

@@ -2,8 +2,19 @@
 import React from 'react';
 import { Clock, Globe, Star, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useNotification } from '../context/NotificationContext';
 
 const CourseCard = ({ course }) => {
+  const { addNotification } = useNotification();
+
+  const handleAddToWishlist = (e) => {
+    e.preventDefault(); // Prevent navigation if wrapped in Link
+    e.stopPropagation();
+    addNotification();
+    // Optional: Add toast or visual feedback here
+    console.log("Added to notifications");
+  };
+
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
       {/* Image Section */}
@@ -19,7 +30,10 @@ const CourseCard = ({ course }) => {
           </span>
         </div>
         <div className="absolute top-4 right-4">
-            <button className="p-2 bg-black/30 backdrop-blur-sm rounded-full text-white hover:bg-black/50 transition">
+            <button 
+                onClick={handleAddToWishlist}
+                className="p-2 bg-black/30 backdrop-blur-sm rounded-full text-white hover:bg-red-500 hover:text-white transition-all transform active:scale-95"
+            >
                 <Heart size={18} />
             </button>
         </div>

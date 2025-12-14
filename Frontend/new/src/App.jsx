@@ -5,6 +5,7 @@ import Header from './Components/Header';
 import HeroCarousel from './Components/HeroCarousel';
 import Chatbot from './Components/Chatbot';
 import AuthModal from './Components/AuthModal';
+import OAuthSuccess from './Components/OAuthSuccess';
 import TrendingCourses from './Components/TrendingCourses';
 import Workshops from './Components/Workshops';
 import ScrollBackground from './Components/ScrollBackground';
@@ -19,6 +20,9 @@ import BoldTypographyBanner from './Components/BoldTypographyBanner';
 import Footer from './Components/Footer';
 import BlogPage from './pages/BlogPage';
 import BlogDetail from './pages/BlogDetail';
+import AdminLoginPage from './pages/AdminLoginPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 
 import UserDashboard from './Components/UserDashboard';
 import AdminDashboard from './Components/AdminDashboard';
@@ -40,9 +44,12 @@ const ProtectedRoute = ({ children, role }) => {
     return children;
 };
 
+import { NotificationProvider } from './context/NotificationContext';
+
 // Layout for Public Pages (Home, Courses, Blog)
-const PublicLayout = ({ children, setIsAuthOpen, isAuthenticated }) => {
+const PublicLayout = ({ children, setIsAuthOpen, isAuthenticated, onLogout }) => {
     return (
+        <NotificationProvider>
         <div className="bg-white min-h-screen font-sans text-gray-900 relative flex flex-col">
              <ScrollBackground />
              <div className="relative z-10 flex flex-col min-h-screen">
@@ -50,7 +57,7 @@ const PublicLayout = ({ children, setIsAuthOpen, isAuthenticated }) => {
                 <Header 
                     onOpenAuth={() => setIsAuthOpen(true)} 
                     isAuthenticated={isAuthenticated}
-                    // onNavigate unused now, handled by Links
+                    onLogout={onLogout}
                 />
                 <main className="flex-grow">
                     {children}
@@ -59,6 +66,7 @@ const PublicLayout = ({ children, setIsAuthOpen, isAuthenticated }) => {
                 <Footer />
              </div>
         </div>
+        </NotificationProvider>
     );
 };
 
@@ -72,14 +80,24 @@ function App() {
     if (token) setIsAuthenticated(true);
   }, []);
 
+  const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setIsAuthenticated(false);
+  };
+
   return (
     <>
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <AuthModal 
+        isOpen={isAuthOpen} 
+        onClose={() => setIsAuthOpen(false)} 
+        onLoginSuccess={() => { setIsAuthenticated(true); setIsAuthOpen(false); }}
+      />
       
       <Routes>
         {/* Landing Page */}
         <Route path="/" element={
-            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated} onLogout={handleLogout}>
                 <HeroCarousel />
                 <div id="trending"><TrendingCourses /></div>
                 <div id="workshops"><Workshops /></div>
@@ -91,28 +109,43 @@ function App() {
             </PublicLayout>
         } />
         
+        {/* Auth Pages */}
+        <Route path="/login" element={
+            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated} onLogout={handleLogout}>
+                <LoginPage />
+            </PublicLayout>
+        } />
+
+        <Route path="/signup" element={
+            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated} onLogout={handleLogout}>
+                <SignupPage />
+            </PublicLayout>
+        } />
+
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
+        
         {/* Course Pages */}
         <Route path="/courses" element={
-             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated} onLogout={handleLogout}>
                 <CourseList />
              </PublicLayout>
         } />
         
         <Route path="/course/:id" element={
-            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+            <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated} onLogout={handleLogout}>
                <CourseDetails />
             </PublicLayout>
         } />
         
         {/* Blog Page */}
         <Route path="/blog" element={
-             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated} onLogout={handleLogout}>
                 <BlogPage />
              </PublicLayout>
         } />
         
         <Route path="/blog/:slug" element={
-             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated}>
+             <PublicLayout setIsAuthOpen={setIsAuthOpen} isAuthenticated={isAuthenticated} onLogout={handleLogout}>
                 <BlogDetail />
              </PublicLayout>
         } />
