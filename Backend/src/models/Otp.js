@@ -1,25 +1,29 @@
 import { pool } from '../config/db.js';
 
 const Otp = {
-    create: async (mobile, otpCode) => {
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
-        console.log(`[OTP DB] Creating: Mobile=${mobile}, Code=${otpCode}, Expires=${expiresAt.toISOString()}`);
+    create: async (identifier, otpCode) => {
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+        const isEmail = identifier.includes('@');
+        console.log(`[OTP DB] Creating: ${identifier}, Code=${otpCode}`);
+
         const query = `
-            INSERT INTO otp_logs (mobile, otp_code, expires_at)
+            INSERT INTO otp_logs (${isEmail ? 'email' : 'mobile'}, otp_code, expires_at)
             VALUES (?, ?, ?)
         `;
-        await pool.execute(query, [mobile, otpCode, expiresAt]);
+        await pool.execute(query, [identifier, otpCode, expiresAt]);
     },
 
-    verify: async (mobile, otpCode) => {
-        console.log(`[OTP DB] Verifying: Mobile=${mobile}, Code=${otpCode}`);
+    verify: async (identifier, otpCode) => {
+        console.log(`[OTP DB] Verifying: ${identifier}, Code=${otpCode}`);
+        const isEmail = identifier.includes('@');
+        const col = isEmail ? 'email' : 'mobile';
+
         const query = `
             SELECT * FROM otp_logs 
-            WHERE mobile = ? AND otp_code = ? AND is_used = FALSE AND expires_at > ?
+            WHERE ${col} = ? AND otp_code = ? AND is_used = FALSE AND expires_at > ?
             ORDER BY created_at DESC LIMIT 1
         `;
-        const [rows] = await pool.execute(query, [mobile, otpCode, new Date()]);
-        console.log(`[OTP DB] Result Rows: ${rows.length}`, rows[0]);
+        const [rows] = await pool.execute(query, [identifier, otpCode, new Date()]);
         return rows[0];
     },
 

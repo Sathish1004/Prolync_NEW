@@ -2,13 +2,13 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5001/api'; // Adjust if needed
 
-export const sendOtp = async (mobile) => {
-    const response = await axios.post(`${API_URL}/user/send-otp`, { mobile });
+export const sendOtp = async (email) => {
+    const response = await axios.post(`${API_URL}/otp/send`, { email });
     return response.data;
 };
 
-export const verifyOtp = async (mobile, otp, userData) => {
-    const response = await axios.post(`${API_URL}/user/verify-otp`, { mobile, otp, userData });
+export const verifyOtp = async (email, otp, userData) => {
+    const response = await axios.post(`${API_URL}/otp/verify`, { email, otp, userData });
     return response.data;
 };
 

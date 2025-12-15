@@ -14,7 +14,6 @@ const EnrollmentCard = () => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
-        mobile: '',
         couponCode: ''
     });
     
@@ -61,8 +60,7 @@ const EnrollmentCard = () => {
         if (!formData.fullName.trim()) newErrors.fullName = 'Name is required';
         if (!formData.email.trim()) newErrors.email = 'Email is required';
         else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email';
-        if (!formData.mobile.trim()) newErrors.mobile = 'Mobile is required';
-        else if (!/^\d{10}$/.test(formData.mobile)) newErrors.mobile = 'Invalid mobile number (10 digits)';
+        // Removed mobile validation
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -76,13 +74,13 @@ const EnrollmentCard = () => {
 
         setLoading(true);
         try {
-            await sendOtp(formData.mobile);
+            await sendOtp(formData.email); // Changed to email
             setStep(2);
             setTimer(300);
             setOtpSent(true);
         } catch (error) {
             console.error(error);
-            alert("Failed to send OTP. Please try again.");
+            alert("Failed to send OTP. Please check your email and try again.");
         } finally {
             setLoading(false);
         }
@@ -94,11 +92,17 @@ const EnrollmentCard = () => {
 
         setLoading(true);
         try {
-            const data = await verifyOtp(formData.mobile, otp, formData); // Send formData to register/update user
+            const data = await verifyOtp(formData.email, otp, formData); // Changed to email
             if (data.verified) {
                 // Store token/user (optional: context)
-                localStorage.setItem('token', data.token);
-                setUser(data.user);
+                // localStorage.setItem('token', data.token); // If token returned
+                // setUser(data.user); // If user returned
+                // Since api just returns verified: true, we simulate user object for payment step
+                setUser({
+                    name: formData.fullName,
+                    email: formData.email,
+                    id: 999 // Placeholder ID or should come from backend if user created
+                });
                 setStep(3); // Go to Payment
             } else {
                 alert("Invalid OTP");
@@ -121,11 +125,7 @@ const EnrollmentCard = () => {
             
             // 2. Open Razorpay
             const options = {
-                key: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder', // Should come from API or env if safe (usually API returns key)
-                // For security, key should ideally be fetched or hardcoded if public key
-                // We'll use a placeholder or assume it works if Env vars are set in Vite
-                // Vite env vars: import.meta.env.VITE_RAZORPAY_KEY_ID
-                key: "rzp_test_YourKeyHere", // Ideally fetch this config from backend
+                key: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder', // Should come from API or env
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: "Prolync Education",
@@ -143,8 +143,7 @@ const EnrollmentCard = () => {
                         });
                         
                         if (verifyRes.success) {
-                            alert("Payment Successful! Welcome to the course.");
-                            // Redirect to My Learning or Dashboard
+                            alert("Payment successful! Enrollment confirmation has been sent to your email.");
                             navigate('/dashboard'); 
                         }
                     } catch (verifyErr) {
@@ -154,8 +153,7 @@ const EnrollmentCard = () => {
                 },
                 prefill: {
                     name: user.name,
-                    email: user.email,
-                    contact: user.mobile
+                    email: user.email
                 },
                 theme: {
                     color: "#4f46e5"
@@ -175,8 +173,8 @@ const EnrollmentCard = () => {
 
     const handleResendOtp = async () => {
         setTimer(300);
-        await sendOtp(formData.mobile);
-        alert("OTP Resent!");
+        await sendOtp(formData.email);
+        alert("OTP Resent to your Email!");
     };
 
     const years = Array.from({ length: 15 }, (_, i) => 2026 - i);
@@ -189,10 +187,10 @@ const EnrollmentCard = () => {
                 <>
                 <div className="text-center mb-6">
                     <h3 className="text-xl font-extrabold text-gray-900 tracking-tight">Apply now to Unlock!</h3>
+                    <p className="text-sm text-gray-500 mt-2">Our team will send enrollment details to your registered email.</p>
                 </div>
 
                 <form onSubmit={handleApply} className="space-y-4">
-                    {/* Simplified for brevity - Assume all inputs from original code are here */}
                      {/* Name */}
                     <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name" 
                         className={`w-full px-4 py-3 rounded-lg border focus:ring-2 outline-none ${errors.fullName ? 'border-red-500' : 'border-gray-300 focus:border-indigo-500'}`} />
@@ -201,13 +199,6 @@ const EnrollmentCard = () => {
                     <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email Address" 
                         className={`w-full px-4 py-3 rounded-lg border focus:ring-2 outline-none ${errors.email ? 'border-red-500' : 'border-gray-300 focus:border-indigo-500'}`} />
                     
-                    {/* Mobile */}
-                    <div className="flex">
-                        <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-600 text-sm">IN +91</span>
-                        <input type="tel" name="mobile" maxLength="10" value={formData.mobile} onChange={(e) => handleChange({target: {name: 'mobile', value: e.target.value.replace(/\D/g,'')}})} 
-                            placeholder="Mobile Number" className={`w-full px-4 py-3 rounded-r-lg border focus:ring-2 outline-none ${errors.mobile ? 'border-red-500' : 'border-gray-300 focus:border-indigo-500'}`} />
-                    </div>
-
                     {Object.keys(errors).length > 0 && <p className="text-red-500 text-xs text-center">*Please fill all fields.</p>}
 
                      <button type="submit" disabled={loading} className="w-full bg-[#10B981] text-white font-bold text-lg py-3 rounded-lg hover:bg-green-600 transition-all shadow-lg shadow-green-200 mt-2 flex items-center justify-center gap-2">
@@ -225,9 +216,9 @@ const EnrollmentCard = () => {
                         <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                             <ShieldCheck className="text-green-600" size={32} />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900">Verify Mobile Number</h3>
-                        <p className="text-sm text-gray-500 mt-2">Enter the 6-digit code sent to <br/><span className="font-bold text-gray-800">+91 {formData.mobile}</span></p>
-                        <button onClick={() => setStep(1)} className="text-xs text-indigo-500 hover:underline mt-1">Change Number</button>
+                        <h3 className="text-xl font-bold text-gray-900">Verify Email Address</h3>
+                        <p className="text-sm text-gray-500 mt-2">Enter the 6-digit code sent to <br/><span className="font-bold text-gray-800">{formData.email}</span></p>
+                        <button onClick={() => setStep(1)} className="text-xs text-indigo-500 hover:underline mt-1">Change Email</button>
                     </div>
 
                     <form onSubmit={handleVerifyOtp} className="space-y-6">
@@ -235,7 +226,7 @@ const EnrollmentCard = () => {
                             type="text" 
                             value={otp} 
                             onChange={(e) => setOtp(e.target.value.replace(/\D/g,'').slice(0,6))}
-                            placeholder="Entet OTP"
+                            placeholder="Enter 6-Digit OTP"
                             className="w-full text-center text-3xl tracking-[0.5em] font-bold py-3 border-b-2 border-indigo-200 focus:border-indigo-600 outline-none transition-colors"
                         />
                         

@@ -57,6 +57,7 @@ const BlogPage = ({ onNavigate }) => {
       readTime: "8 min read",
       featured: false
     },
+    
     {
       id: 3,
       title: "Data Science Roadmap: From Beginner to Pro",

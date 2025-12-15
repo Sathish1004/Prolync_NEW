@@ -1,54 +1,61 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaDiscord, FaSlack, FaReddit, FaTwitter, FaFacebook, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3, FaJs, FaAws } from 'react-icons/fa';
-import { SiFirebase, SiMongodb } from 'react-icons/si';
-import { Users, MessageCircle, Share2, CheckCircle, ShieldCheck, Rocket } from 'lucide-react';
+import avatar1 from '../assets/avatar_1.png';
+import avatar2 from '../assets/avatar_2.png';
+import avatar3 from '../assets/avatar_3.png';
+import avatar4 from '../assets/avatar_4.png';
+import avatar5 from '../assets/avatar_5.png';
 
-const FeatureCard = ({ title, description, children, delay }) => (
+const StatCard = ({ count, label, subLabel, delay }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 30 }}
+    initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6, delay }}
-    whileHover={{ y: -5, scale: 1.02 }}
-    className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl border border-gray-100 hover:border-indigo-200 transition-all duration-300 relative overflow-hidden group h-full flex flex-col"
+    transition={{ duration: 0.5, delay }}
+    className="bg-gray-50 rounded-2xl p-6 flex flex-col justify-center items-start hover:shadow-lg transition-shadow duration-300 border border-transparent hover:border-gray-200"
   >
-    {/* Soft Gradient Background */}
-    <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC] to-white pointer-events-none"></div>
-    
-    {/* Card Content */}
-    <div className="relative z-10 flex flex-col h-full">
-        {/* Icon Area */}
-        <div className="h-32 mb-6 flex items-center justify-center relative">
-            {children}
-        </div>
-
-        <h3 className="text-xl font-bold text-[#0A2540] mb-3 group-hover:text-indigo-600 transition-colors">
-            {title}
-        </h3>
-        <p className="text-slate-500 text-sm leading-relaxed">
-            {description}
-        </p>
-    </div>
+     <h3 className="text-4xl font-extrabold text-[#0A2540] mb-2">{count}</h3>
+     <p className="text-lg font-semibold text-gray-800">{label}</p>
+     {subLabel && <p className="text-sm text-gray-500">{subLabel}</p>}
   </motion.div>
 );
 
-const FloatingIcon = ({ icon: Icon, color, className, delay = 0 }) => (
-    <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay }}
-        className={`absolute bg-white p-2.5 rounded-xl shadow-md border border-gray-100 text-${color}-500 ${className}`}
-    >
-        <Icon size={20} />
-    </motion.div>
+const AvatarRow = () => (
+    <div className="flex flex-col items-center justify-center mb-16">
+        <div className="flex -space-x-4 mb-4">
+            {[avatar1, avatar2, avatar3, avatar4, avatar5].map((src, i) => (
+                <motion.img 
+                    key={i}
+                    src={src}
+                    alt={`Community Member ${i+1}`}
+                    initial={{ opacity: 0, scale: 0.5, x: -20 }}
+                    whileInView={{ opacity: 1, scale: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ scale: 1.1, zIndex: 10 }}
+                    className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white shadow-lg object-cover cursor-pointer hover:shadow-xl transition-all"
+                />
+            ))}
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.5 }}
+               whileInView={{ opacity: 1, scale: 1 }}
+               transition={{ delay: 0.6 }}
+               className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white shadow-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg md:text-xl z-0"
+            >
+                +5k
+            </motion.div>
+        </div>
+        <p className="text-slate-500 text-center max-w-lg">
+            Our vibrant community produces content, teaches courses, and leads events all over the globe.
+        </p>
+    </div>
 );
 
 const CommunityFeatures = () => {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
-      <div className="container mx-auto px-4 max-w-10xl relative z-20">
+      <div className="container mx-auto px-4 max-w-7xl relative z-20">
         
         {/* Header */}
-        <div className="text-center mb-20 max-w-3xl mx-auto">
+        <div className="text-center mb-12">
              <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -59,7 +66,7 @@ const CommunityFeatures = () => {
              <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-4xl md:text-5xl font-bold text-[#0A2540] mb-6 tracking-tight"
+                className="text-4xl md:text-5xl font-bold text-[#0A2540] mb-4 tracking-tight"
              >
                 Why Choose the Prolync Community?
              </motion.h2>
@@ -73,88 +80,35 @@ const CommunityFeatures = () => {
              </motion.p>
         </div>
 
-        {/* 4-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+        {/* Avatar Row */}
+        <AvatarRow />
 
-            {/* CARD 1: Support Network */}
-            <FeatureCard 
-                title="24/7 Learning Support Network" 
-                description="Get answers fast from mentors & peers anytime. Never get stuck on a bug again."
-                delay={0.1}
-            >
-                <div className="relative w-full h-full flex items-center justify-center bg-indigo-50/50 rounded-2xl overflow-hidden">
-                   <div className="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.1]"></div>
-                   <FloatingIcon icon={FaDiscord} color="indigo" className="top-4 left-4" delay={0} />
-                   <FloatingIcon icon={FaSlack} color="purple" className="top-8 right-6" delay={1} />
-                   <FloatingIcon icon={FaReddit} color="orange" className="bottom-6 left-8" delay={2} />
-                   <FloatingIcon icon={FaTwitter} color="sky" className="bottom-8 right-4" delay={1.5} />
-                   <div className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center z-10 relative">
-                       <MessageCircle size={24} className="text-indigo-600" />
-                       <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                   </div>
-                </div>
-            </FeatureCard>
-
-            {/* CARD 2: Choose Tech Language */}
-            <FeatureCard 
-                title="Choose Your Tech Language" 
-                description="Learn in your preferred ecosystem with structured paths designed by industry experts."
-                delay={0.2}
-            >
-                <div className="grid grid-cols-3 gap-3 p-4 bg-white rounded-2xl shadow-inner border border-gray-50 w-full rotate-3 hover:rotate-0 transition-transform duration-500">
-                    {[FaReact, FaNodeJs, FaJs, FaPython, SiFirebase, SiMongodb, FaHtml5, FaCss3, FaAws].map((Icon, i) => (
-                        <div key={i} className="flex items-center justify-center p-2 bg-gray-50 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
-                            <Icon size={18} />
-                        </div>
-                    ))}
-                </div>
-            </FeatureCard>
-
-            {/* CARD 3: Community Circles */}
-            <FeatureCard 
-                title="Prolync Community Circles" 
-                description="Join curated circles for Web Dev, AI, Cloud, Data, and DevOps to focus your growth."
-                delay={0.3}
-            >
-                 <div className="relative w-full h-full flex items-center justify-center">
-                    <div className="absolute w-24 h-24 bg-purple-100 rounded-full animate-ping opacity-20"></div>
-                    <div className="absolute w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center">
-                        <Users size={32} className="text-purple-600" />
-                    </div>
-                    {/* Orbiting dots */}
-                    <div className="absolute w-full h-full animate-spin-slow">
-                        <div className="absolute top-0 left-1/2 w-3 h-3 bg-indigo-400 rounded-full -translate-x-1/2"></div>
-                        <div className="absolute bottom-0 left-1/2 w-3 h-3 bg-pink-400 rounded-full -translate-x-1/2"></div>
-                    </div>
-                 </div>
-            </FeatureCard>
-
-            {/* CARD 4: Career-Ready Skills */}
-            <FeatureCard 
-                title="Career-Ready Skill Catalog" 
-                description="Industry-designed skill tracks with project-based certification to get you hired."
-                delay={0.4}
-            >
-                <div className="w-full h-full flex flex-col gap-3 justify-center px-4">
-                     {[
-                        { text: "Project Based", icon: Rocket, color: "text-orange-500" },
-                        { text: "Certified", icon: ShieldCheck, color: "text-green-500" },
-                        { text: "Job Ready", icon: CheckCircle, color: "text-blue-500" }
-                     ].map((item, i) => (
-                         <motion.div 
-                           key={i}
-                           initial={{ x: -10, opacity: 0 }}
-                           whileInView={{ x: 0, opacity: 1 }}
-                           transition={{ delay: 0.5 + (i * 0.1) }}
-                           className="flex items-center gap-3 bg-white p-2 rounded-lg shadow-sm border border-gray-100"
-                         >
-                             <item.icon size={16} className={item.color} />
-                             <span className="text-xs font-bold text-gray-700">{item.text}</span>
-                         </motion.div>
-                     ))}
-                </div>
-            </FeatureCard>
-
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard 
+                count="5000+" 
+                label="Learners" 
+                subLabel="Asking questions daily"
+                delay={0.2} 
+            />
+            <StatCard 
+                count="805k+" 
+                label="Subscribers" 
+                subLabel="On YouTube"
+                delay={0.3} 
+            />
+             <StatCard 
+                count="5000+" 
+                label="Students" 
+                subLabel="On WhatsApp Channel"
+                delay={0.4} 
+            />
+             <StatCard 
+                count="10,000+" 
+                label="Followers" 
+                subLabel="On LinkedIn"
+                delay={0.5} 
+            />
         </div>
 
       </div>

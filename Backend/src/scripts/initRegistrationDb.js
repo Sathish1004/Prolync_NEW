@@ -41,14 +41,31 @@ const initRegistrationDb = async () => {
         await connection.query(`
             CREATE TABLE IF NOT EXISTS otp_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                mobile VARCHAR(15) NOT NULL,
+                mobile VARCHAR(15),
+                email VARCHAR(100),
                 otp_code VARCHAR(6) NOT NULL,
                 expires_at DATETIME NOT NULL,
                 is_used BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
-        console.log("Created 'otp_logs' table.");
+        console.log("Created 'otp_logs' table (if not existed).");
+
+        // Add email column if missing
+        try {
+            await connection.query("ALTER TABLE otp_logs ADD COLUMN email VARCHAR(100)");
+            console.log("Added 'email' column to otp_logs.");
+        } catch (e) {
+            if (e.errno !== 1060) console.log("Note: " + e.message);
+        }
+
+        // Make mobile nullable
+        try {
+            await connection.query("ALTER TABLE otp_logs MODIFY mobile VARCHAR(15) NULL");
+            console.log("Modified 'mobile' to be nullable in otp_logs.");
+        } catch (e) {
+            console.log("Note: " + e.message);
+        }
 
         // 3. Create orders table (for Payment)
         await connection.query(`

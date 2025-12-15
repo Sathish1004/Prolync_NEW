@@ -49,6 +49,7 @@ import adminRouter from './routes/admin.routes.js'
 import lecturerRouter from './routes/lecturer.routes.js'
 import blogRouter from './routes/blog.routes.js'
 import paymentRouter from './routes/payment.routes.js'
+import otpRouter from './routes/otp.routes.js'
 
 // routes declaration
 app.use("/auth", authRoutes); // Google Auth Routes
@@ -58,6 +59,7 @@ app.use("/api/admin", adminRouter)
 app.use("/api/lecturer", lecturerRouter)
 app.use("/api/blogs", blogRouter)
 app.use("/api/payment", paymentRouter)
+app.use("/api/otp", otpRouter)
 
 // Keep legacy /api for frontend backward compatibility if needed, 
 // OR better yet, I should check if I need to update frontend FIRST.
